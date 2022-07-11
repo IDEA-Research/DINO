@@ -8,4 +8,5 @@
 # ------------------------------------------------------------------------------------------------
 
 
-TORCH_CUDA_ARCH_LIST="8.0" CUDA_HOME='/comp_robot/liushilong/software/cuda-11.1'  python setup.py build install
+#TORCH_CUDA_ARCH_LIST="8.0" CUDA_HOME='/path/to/your/cuda/dir'  
+python setup.py build install

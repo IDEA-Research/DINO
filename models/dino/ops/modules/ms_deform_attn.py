@@ -11,7 +11,7 @@ from __future__ import print_function
 from __future__ import division
 
 import warnings
-import math, os
+import math
 
 import torch
 from torch import nn
@@ -28,7 +28,7 @@ def _is_power_of_2(n):
 
 
 class MSDeformAttn(nn.Module):
-    def __init__(self, d_model=256, n_levels=4, n_heads=8, n_points=4, use_4D_normalizer=False):
+    def __init__(self, d_model=256, n_levels=4, n_heads=8, n_points=4):
         """
         Multi-Scale Deformable Attention Module
         :param d_model      hidden dimension
@@ -56,8 +56,6 @@ class MSDeformAttn(nn.Module):
         self.attention_weights = nn.Linear(d_model, n_heads * n_levels * n_points)
         self.value_proj = nn.Linear(d_model, d_model)
         self.output_proj = nn.Linear(d_model, d_model)
-
-        self.use_4D_normalizer = use_4D_normalizer
 
         self._reset_parameters()
 
@@ -101,39 +99,16 @@ class MSDeformAttn(nn.Module):
         attention_weights = self.attention_weights(query).view(N, Len_q, self.n_heads, self.n_levels * self.n_points)
         attention_weights = F.softmax(attention_weights, -1).view(N, Len_q, self.n_heads, self.n_levels, self.n_points)
         # N, Len_q, n_heads, n_levels, n_points, 2
-
-        # if os.environ.get('IPDB_DEBUG_SHILONG', False) == 'INFO':
-        #     import ipdb; ipdb.set_trace()
-
         if reference_points.shape[-1] == 2:
             offset_normalizer = torch.stack([input_spatial_shapes[..., 1], input_spatial_shapes[..., 0]], -1)
             sampling_locations = reference_points[:, :, None, :, None, :] \
                                  + sampling_offsets / offset_normalizer[None, None, None, :, None, :]
         elif reference_points.shape[-1] == 4:
-            if self.use_4D_normalizer:
-                offset_normalizer = torch.stack([input_spatial_shapes[..., 1], input_spatial_shapes[..., 0]], -1)
-                sampling_locations = reference_points[:, :, None, :, None, :2] \
-                                    + sampling_offsets / offset_normalizer[None, None, None, :, None, :] * reference_points[:, :, None, :, None, 2:] * 0.5
-            else:
-                sampling_locations = reference_points[:, :, None, :, None, :2] \
-                                    + sampling_offsets / self.n_points * reference_points[:, :, None, :, None, 2:] * 0.5
+            sampling_locations = reference_points[:, :, None, :, None, :2] \
+                                 + sampling_offsets / self.n_points * reference_points[:, :, None, :, None, 2:] * 0.5
         else:
             raise ValueError(
                 'Last dim of reference_points must be 2 or 4, but get {} instead.'.format(reference_points.shape[-1]))
-
-
-        # if os.environ.get('IPDB_DEBUG_SHILONG', False) == 'INFO':
-        #     import ipdb; ipdb.set_trace()
-
-        # for amp
-        if value.dtype == torch.float16:
-            # for mixed precision
-            output = MSDeformAttnFunction.apply(
-            value.to(torch.float32), input_spatial_shapes, input_level_start_index, sampling_locations.to(torch.float32), attention_weights, self.im2col_step)
-            output = output.to(torch.float16)
-            output = self.output_proj(output)
-            return output
-
         output = MSDeformAttnFunction.apply(
             value, input_spatial_shapes, input_level_start_index, sampling_locations, attention_weights, self.im2col_step)
         output = self.output_proj(output)

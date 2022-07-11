@@ -19,23 +19,15 @@ Authors: [Hao Zhang](https://scholar.google.com/citations?user=B8hPxMQAAAAJ&hl=z
 </br>
 [2022/3/9]: We build a repo [Awesome Detection Transformer](https://github.com/IDEACVR/awesome-detection-transformer) to present papers about transformer for detection and segmenttion. Welcome to your attention!
 
-# Abstract
+![SOTA results](figs/sota.jpg "results on MSCOCO")
+# Introduction
 We present **DINO** (**D**ETR with **I**mproved de**N**oising anch**O**r
-boxes), a state-of-the-art end-to-end object detector. DINO improves
-over previous DETR-like models in performance and efficiency by using
-a contrastive way for denoising training, a mixed query selection method
-for anchor initialization, and a look forward twice scheme for box prediction. DINO achieves **48.3**AP in 12 epochs and **51.0**AP in 36 epochs
-on COCO with a ResNet-50 backbone and multi-scale features, yielding a significant improvement of +**4.9**AP and +**2.4**AP, respectively,
-compared to DN-DETR, the previous best DETR-like model. DINO
-scales well in both model size and data size. Without bells and whistles,
-after pre-training on the Objects365 dataset with a SwinL backbone,
-DINO obtains the best results on both COCO val2017 (**63.2**AP) and
-test-dev (**63.3**AP). Compared to other models on the leaderboard,
-DINO significantly reduces its model size and pre-training data size
-while achieving better results.
+boxes) with:
 
-# Results
-![SOTA results](figs/sota.png "results on MSCOCO")
+1. **State-of-the-art & end-to-end**: DINO achieves **63.2** AP on COCO Val and **63.3** AP on COCO test-dev with more than ten times smaller model size and data size than previous best models.
+2. **Fast-converging**: With the ResNet-50 backbone, DINO with 5 scales achieves  **49.4** AP in 12 epochs and **51.3** AP in 24 epochs. Our 4-scale model achieves similar performance and runs at 23 FPS.
+
+
 
 # Methods
 ![method](figs/framework.png "model arch")

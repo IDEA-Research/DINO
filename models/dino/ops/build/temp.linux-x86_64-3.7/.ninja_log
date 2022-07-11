@@ -1,0 +1,4 @@
+# ninja log v5
+1	3827	1630489995529921052	/comp_robot/liushilong/code/Deformable-DETR/models/ops/build/temp.linux-x86_64-3.7/comp_robot/liushilong/code/Deformable-DETR/models/ops/src/cpu/ms_deform_attn_cpu.o	4b3762b2d31fbe35
+1	12524	1630490004221140747	/comp_robot/liushilong/code/Deformable-DETR/models/ops/build/temp.linux-x86_64-3.7/comp_robot/liushilong/code/Deformable-DETR/models/ops/src/cuda/ms_deform_attn_cuda.o	ad60abf3695bb0de
+1	19013	1630490010702105849	/comp_robot/liushilong/code/Deformable-DETR/models/ops/build/temp.linux-x86_64-3.7/comp_robot/liushilong/code/Deformable-DETR/models/ops/src/vision.o	a49c0a2b40de60c0

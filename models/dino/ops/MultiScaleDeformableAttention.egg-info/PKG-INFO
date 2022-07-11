@@ -1,0 +1,10 @@
+Metadata-Version: 1.0
+Name: MultiScaleDeformableAttention
+Version: 1.0
+Summary: PyTorch Wrapper for CUDA Functions of Multi-Scale Deformable Attention
+Home-page: https://github.com/fundamentalvision/Deformable-DETR
+Author: Weijie Su
+Author-email: UNKNOWN
+License: UNKNOWN
+Description: UNKNOWN
+Platform: UNKNOWN

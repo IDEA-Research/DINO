@@ -1,7 +1,9 @@
-_base_ = ['coco_transformer.py']
-
-num_classes=91
-
+data_aug_scales = [480, 512, 544, 576, 608, 640, 672, 704, 736, 768, 800]
+data_aug_max_size = 1333
+data_aug_scales2_resize = [400, 500, 600]
+data_aug_scales2_crop = [384, 600]
+data_aug_scale_overlap = None
+num_classes = 91
 lr = 0.0001
 param_dict_type = 'default'
 lr_backbone = 1e-05
@@ -18,13 +20,10 @@ clip_max_norm = 0.1
 onecyclelr = False
 multi_step_lr = False
 lr_drop_list = [33, 45]
-
-
 modelname = 'dino'
 frozen_weights = None
 backbone = 'convnext_xlarge_22k'
 use_checkpoint = False
-
 dilation = False
 position_embedding = 'sine'
 pe_temperatureH = 20
@@ -85,29 +84,24 @@ enc_loss_coef = 1.0
 interm_loss_coef = 1.0
 no_interm_box_loss = False
 focal_alpha = 0.25
-
-decoder_sa_type = 'sa' # ['sa', 'ca_label', 'ca_content']
-matcher_type = 'HungarianMatcher' # or SimpleMinsumMatcher
+decoder_sa_type = 'sa'
+matcher_type = 'HungarianMatcher'
 decoder_module_seq = ['sa', 'ca', 'ffn']
 nms_iou_threshold = -1
-
 dec_pred_bbox_embed_share = True
 dec_pred_class_embed_share = True
-
-# for dn
 use_dn = True
 dn_number = 100
-dn_box_noise_scale = 0.4
+dn_box_noise_scale = 1.0
 dn_label_noise_ratio = 0.5
 embed_init_tgt = True
 dn_labelbook_size = 91
-
 match_unstable_error = True
-
-# for ema
 use_ema = False
 ema_decay = 0.9997
 ema_epoch = 0
-
 use_detached_boxes_dec_out = False
-
+dn_scalar = 100
+dn_label_coef = 1.0
+dn_bbox_coef = 1.0
+backbone_dir = '/student/zhanghao/pretrained/'

@@ -1,0 +1,45 @@
+submitit ERROR (2022-07-15 00:28:26,132) - Submitted job triggered an exception
+Traceback (most recent call last):
+  File "/home/zhanghao/miniconda3/envs/q2x/lib/python3.7/runpy.py", line 193, in _run_module_as_main
+    "__main__", mod_spec)
+  File "/home/zhanghao/miniconda3/envs/q2x/lib/python3.7/runpy.py", line 85, in _run_code
+    exec(code, run_globals)
+  File "/home/zhanghao/miniconda3/envs/q2x/lib/python3.7/site-packages/submitit/core/_submit.py", line 11, in <module>
+    submitit_main()
+  File "/home/zhanghao/miniconda3/envs/q2x/lib/python3.7/site-packages/submitit/core/submission.py", line 71, in submitit_main
+    process_job(args.folder)
+  File "/home/zhanghao/miniconda3/envs/q2x/lib/python3.7/site-packages/submitit/core/submission.py", line 64, in process_job
+    raise error
+  File "/home/zhanghao/miniconda3/envs/q2x/lib/python3.7/site-packages/submitit/core/submission.py", line 53, in process_job
+    result = delayed.result()
+  File "/home/zhanghao/miniconda3/envs/q2x/lib/python3.7/site-packages/submitit/core/utils.py", line 128, in result
+    self._result = self.function(*self.args, **self.kwargs)
+  File "run_with_submitit.py", line 57, in __call__
+    detection.main(self.args)
+  File "/student/zhanghao/code/DINO/main.py", line 285, in main
+    args.clip_max_norm, wo_class_error=wo_class_error, lr_scheduler=lr_scheduler, args=args, logger=(logger if args.save_log else None), ema_m=ema_m)
+  File "/student/zhanghao/code/DINO/engine.py", line 48, in train_one_epoch
+    outputs = model(samples, targets)
+  File "/home/zhanghao/miniconda3/envs/q2x/lib/python3.7/site-packages/torch/nn/modules/module.py", line 1051, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/student/zhanghao/code/DINO/models/dino/dino.py", line 241, in forward
+    features, poss = self.backbone(samples)
+  File "/home/zhanghao/miniconda3/envs/q2x/lib/python3.7/site-packages/torch/nn/modules/module.py", line 1051, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/student/zhanghao/code/DINO/models/dino/backbone.py", line 136, in forward
+    xs = self[0](tensor_list)
+  File "/home/zhanghao/miniconda3/envs/q2x/lib/python3.7/site-packages/torch/nn/modules/module.py", line 1051, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/student/zhanghao/code/DINO/models/dino/convnext.py", line 140, in forward
+    outs = self.forward_features(x)
+  File "/student/zhanghao/code/DINO/models/dino/convnext.py", line 124, in forward_features
+    x = self.downsample_layers[i](x)
+  File "/home/zhanghao/miniconda3/envs/q2x/lib/python3.7/site-packages/torch/nn/modules/module.py", line 1051, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/home/zhanghao/miniconda3/envs/q2x/lib/python3.7/site-packages/torch/nn/modules/container.py", line 139, in forward
+    input = module(input)
+  File "/home/zhanghao/miniconda3/envs/q2x/lib/python3.7/site-packages/torch/nn/modules/module.py", line 1051, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/student/zhanghao/code/DINO/models/dino/convnext.py", line 175, in forward
+    x = self.weight[:, None, None] * x + self.bias[:, None, None]
+RuntimeError: CUDA out of memory. Tried to allocate 52.00 MiB (GPU 0; 39.59 GiB total capacity; 1.64 GiB already allocated; 42.12 MiB free; 1.67 GiB reserved in total by PyTorch)

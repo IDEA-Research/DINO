@@ -28,6 +28,9 @@ from typing import Dict, List
 from util.misc import NestedTensor, clean_state_dict, is_main_process
 
 from .position_encoding import build_position_encoding
+from .convnext import build_convnext
+from .swin_transformer import build_swin_transformer
+
 
 
 class FrozenBatchNorm2d(torch.nn.Module):
@@ -166,6 +169,43 @@ def build_backbone(args):
                                 return_interm_indices,   
                                 batch_norm=FrozenBatchNorm2d)
         bb_num_channels = backbone.num_channels
+    elif args.backbone in ['swin_T_224_1k', 'swin_B_224_22k', 'swin_B_384_22k', 'swin_L_224_22k', 'swin_L_384_22k']:
+        pretrain_img_size = int(args.backbone.split('_')[-2])
+        backbone = build_swin_transformer(args.backbone, \
+                    pretrain_img_size=pretrain_img_size, \
+                    out_indices=tuple(return_interm_indices), \
+                dilation=args.dilation, use_checkpoint=use_checkpoint)
+
+        # freeze some layers
+        if backbone_freeze_keywords is not None:
+            for name, parameter in backbone.named_parameters():
+                for keyword in backbone_freeze_keywords:
+                    if keyword in name:
+                        parameter.requires_grad_(False)
+                        break
+
+        pretrained_dir = args.backbone_dir
+        PTDICT = {
+            'swin_T_224_1k': 'swin_tiny_patch4_window7_224.pth',
+            'swin_B_384_22k': 'swin_base_patch4_window12_384.pth',
+            'swin_L_384_22k': 'swin_large_patch4_window12_384_22k.pth',
+        }
+        pretrainedpath = os.path.join(pretrained_dir, PTDICT[args.backbone])
+        checkpoint = torch.load(pretrainedpath, map_location='cpu')['model']
+        from collections import OrderedDict
+        def key_select_function(keyname):
+            if 'head' in keyname:
+                return False
+            if args.dilation and 'layers.3' in keyname:
+                return False
+            return True
+        _tmp_st = OrderedDict({k:v for k, v in clean_state_dict(checkpoint).items() if key_select_function(k)})
+        _tmp_st_output = backbone.load_state_dict(_tmp_st, strict=False)
+        print(str(_tmp_st_output))
+        bb_num_channels = backbone.num_features[4 - len(return_interm_indices):]
+    elif args.backbone in ['convnext_xlarge_22k']:
+        backbone = build_convnext(modelname=args.backbone, pretrained=True, out_indices=tuple(return_interm_indices),backbone_dir=args.backbone_dir)
+        bb_num_channels = backbone.dims[4 - len(return_interm_indices):]
     else:
         raise NotImplementedError("Unknown backbone {}".format(args.backbone))
     

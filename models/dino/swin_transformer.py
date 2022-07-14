@@ -12,15 +12,7 @@ import torch.nn.functional as F
 import torch.utils.checkpoint as checkpoint
 import numpy as np
 from timm.models.layers import DropPath, to_2tuple, trunc_normal_
-
-try:
-    from util.misc import NestedTensor
-except Exception as e:
-    import os, sys
-    sys.path.append('/comp_robot/liushilong/code/query2objects')
-    from util.misc import NestedTensor
-    print(e)    
-
+from util.misc import NestedTensor
 
 
 class Mlp(nn.Module):

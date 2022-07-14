@@ -769,15 +769,11 @@ class TransformerDecoder(nn.Module):
                         class_unselected = self.class_embed[layer_id](output) # nq, bs, 91
                         topk_proposals = torch.topk(class_unselected.max(-1)[0], select_number, dim=0)[1] # new_nq, bs
                         new_reference_points = torch.gather(new_reference_points, 0, topk_proposals.unsqueeze(-1).repeat(1, 1, 4)) # unsigmoid
-                        # import ipdb; ipdb.set_trace()
 
-                # if os.environ.get('IPDB_DEBUG_SHILONG', None) == 'INFO':
-                #     import ipdb; ipdb.set_trace()
                 if self.rm_detach and 'dec' in self.rm_detach:
                     reference_points = new_reference_points
                 else:
                     reference_points = new_reference_points.detach()
-                # if layer_id != self.num_layers - 1:
                 if self.use_detached_boxes_dec_out:
                     ref_points.append(reference_points)
                 else:
@@ -785,9 +781,7 @@ class TransformerDecoder(nn.Module):
 
 
             intermediate.append(self.norm(output))
-            # select # tgt
             if self.dec_layer_number is not None and layer_id != self.num_layers - 1:
-                # import ipdb; ipdb.set_trace()
                 if nq_now != select_number:
                     output = torch.gather(output, 0, topk_proposals.unsqueeze(-1).repeat(1, 1, self.d_model)) # unsigmoid
 
@@ -842,7 +836,6 @@ class DeformableTransformerEncoderLayer(nn.Module):
 
     def forward(self, src, pos, reference_points, spatial_shapes, level_start_index, key_padding_mask=None):
         # self attention
-        # import ipdb; ipdb.set_trace()
         src2 = self.self_attn(self.with_pos_embed(src, pos), reference_points, src, spatial_shapes, level_start_index, key_padding_mask)
         src = src + self.dropout1(src2)
         src = self.norm1(src)
@@ -940,15 +933,12 @@ class DeformableTransformerDecoderLayer(nn.Module):
             ):
         # self attention
         if self.self_attn is not None:
-            # import ipdb; ipdb.set_trace()
             if self.decoder_sa_type == 'sa':
                 q = k = self.with_pos_embed(tgt, tgt_query_pos)
                 tgt2 = self.self_attn(q, k, tgt, attn_mask=self_attn_mask)[0]
                 tgt = tgt + self.dropout2(tgt2)
                 tgt = self.norm2(tgt)
             elif self.decoder_sa_type == 'ca_label':
-                # import ipdb; ipdb.set_trace()
-                # q = self.with_pos_embed(tgt, tgt_query_pos)
                 bs = tgt.shape[1]
                 k = v = self.label_embedding.weight[:, None, :].repeat(1, bs, 1)
                 tgt2 = self.self_attn(tgt, k, v, attn_mask=self_attn_mask)[0]
@@ -985,7 +975,6 @@ class DeformableTransformerDecoderLayer(nn.Module):
                 cross_attn_mask: Optional[Tensor] = None, # mask used for cross-attention
             ):
         # cross attention
-        # import ipdb; ipdb.set_trace()
         if self.key_aware_type is not None:
 
             if self.key_aware_type == 'mean':
@@ -1042,7 +1031,6 @@ class DeformableTransformerDecoderLayer(nn.Module):
 
 
 def _get_clones(module, N, layer_share=False):
-    # import ipdb; ipdb.set_trace()
     if layer_share:
         return nn.ModuleList([module for i in range(N)])
     else:

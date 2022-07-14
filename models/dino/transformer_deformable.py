@@ -495,8 +495,6 @@ class DeformableTransformerDecoderLayer(nn.Module):
             ):
 
         for funcname in self.module_seq:
-            # if os.environ.get('IPDB_DEBUG_SHILONG') == 'INFO':
-            #     import ipdb; ipdb.set_trace()
             if funcname == 'ffn':
                 tgt = self.forward_ffn(tgt)
             elif funcname == 'ca':

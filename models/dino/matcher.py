@@ -62,8 +62,7 @@ class HungarianMatcher(nn.Module):
             For each batch element, it holds:
                 len(index_i) = len(index_j) = min(num_queries, num_target_boxes)
         """
-        # if os.environ.get('IPDB_DEBUG_SHILONG') == 'INFO':
-        #     import ipdb; ipdb.set_trace()
+
         bs, num_queries = outputs["pred_logits"].shape[:2]
 
         # We flatten to compute the cost matrices in a batch
@@ -88,13 +87,11 @@ class HungarianMatcher(nn.Module):
         cost_giou = -generalized_box_iou(box_cxcywh_to_xyxy(out_bbox), box_cxcywh_to_xyxy(tgt_bbox))
 
         # Final cost matrix
-        # import ipdb; ipdb.set_trace()
         C = self.cost_bbox * cost_bbox + self.cost_class * cost_class + self.cost_giou * cost_giou
         C = C.view(bs, num_queries, -1).cpu()
 
         sizes = [len(v["boxes"]) for v in targets]
         indices = [linear_sum_assignment(c[i]) for i, c in enumerate(C.split(sizes, -1))]
-        # import ipdb; ipdb.set_trace()
         return [(torch.as_tensor(i, dtype=torch.int64), torch.as_tensor(j, dtype=torch.int64)) for i, j in indices]
 
 
@@ -138,8 +135,7 @@ class SimpleMinsumMatcher(nn.Module):
             For each batch element, it holds:
                 len(index_i) = len(index_j) = min(num_queries, num_target_boxes)
         """
-        # if os.environ.get('IPDB_DEBUG_SHILONG') == 'INFO':
-        #     import ipdb; ipdb.set_trace()
+
         bs, num_queries = outputs["pred_logits"].shape[:2]
 
         # We flatten to compute the cost matrices in a batch
@@ -176,12 +172,8 @@ class SimpleMinsumMatcher(nn.Module):
             idx_j = torch.arange(_size).to(device)
             indices.append((idx_i, idx_j))
 
-        # import ipdb; ipdb.set_trace()
-        return [(torch.as_tensor(i, dtype=torch.int64), torch.as_tensor(j, dtype=torch.int64)) for i, j in indices] 
+        return [(torch.as_tensor(i, dtype=torch.int64), torch.as_tensor(j, dtype=torch.int64)) for i, j in indices]
 
-
-        # indices = [linear_sum_assignment(c[i]) for i, c in enumerate(C.split(sizes, -1))]
-        # return [(torch.as_tensor(i, dtype=torch.int64), torch.as_tensor(j, dtype=torch.int64)) for i, j in indices]
 
 def build_matcher(args):
     assert args.matcher_type in ['HungarianMatcher', 'SimpleMinsumMatcher'], "Unknown args.matcher_type: {}".format(args.matcher_type)

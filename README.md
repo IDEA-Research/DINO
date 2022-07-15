@@ -185,6 +185,9 @@ Download our DINO model checkpoint "checkpoint0011_4scale.pth" from [this link](
 ```sh
 bash scripts/DINO_eval.sh /path/to/your/COCODIR /path/to/your/checkpoint
 ```
+### Inference and Visualizations
+For inference and visualizations, we provide a [notebook](inference_and_visualization.ipynb) as an example.
+
 ### Train the 4scale model for 12 epochs
 You can also train our model on a single process:
 ```sh

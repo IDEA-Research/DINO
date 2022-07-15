@@ -8,7 +8,7 @@ This is the official implementation of the paper "[DINO: DETR with Improved DeNo
 Authors: [Hao Zhang](https://scholar.google.com/citations?user=B8hPxMQAAAAJ&hl=zh-CN)\*, [Feng Li](https://fengli-ust.github.io/)\*, [Shilong Liu](https://www.lsl.zone/)\*, [Lei Zhang](https://www.leizhang.org/), [Hang Su](https://www.suhangss.me/), [Jun Zhu](https://ml.cs.tsinghua.edu.cn/~jun/index.shtml), [Lionel M. Ni](https://www.cse.ust.hk/~ni/), [Heung-Yeung Shum](https://scholar.google.com.hk/citations?user=9akH-n8AAAAJ&hl=en)
 
 # News
-[2022/7/14]：We released the code with Swin-L and Convnext backbone. </br> 
+[2022/7/14]: We released the code with Swin-L and Convnext backbone. </br> 
 [2022/7/10]: We released the code and checkpoints with Resnet-50 backbone. </br>
 [2022/6/7]: We release a unified detection and segmentation model [Mask DINO](https://arxiv.org/pdf/2206.02777.pdf) that achieves the best results on all the three segmentation tasks (**54.7** AP on [COCO instance leaderboard](https://paperswithcode.com/sota/instance-segmentation-on-coco), **59.5** PQ on [COCO panoptic leaderboard](https://paperswithcode.com/sota/panoptic-segmentation-on-coco-test-dev), and **60.8** mIoU on [ADE20K semantic leaderboard](https://paperswithcode.com/sota/semantic-segmentation-on-ade20k))! Code will be available [here](https://github.com/IDEACVR/MaskDINO).
 </br>
@@ -234,6 +234,8 @@ Our model is based on [DAB-DETR](https://arxiv.org/abs/2201.12329) and [DN-DETR]
 <a href='https://arxiv.org/abs/2201.12329'>[paper]</a> <a href='https://github.com/SlongLiu/DAB-DETR'>[code]</a>    
 </p>
 
+We also thank great previous work including DETR, Deformable DETR, SMCA, Conditional DETR, Anchor DETR, Dynamic DETR, etc. More related work are available at [Awesome Detection Transformer](https://github.com/IDEACVR/awesome-detection-transformer).
+
 ## LICNESE
 DINO is released under the Apache 2.0 license. Please see the [LICENSE](LICNESE) file for more information.
 
@@ -245,7 +247,7 @@ Unless required by applicable law or agreed to in writing, software distributed 
 
 # Bibtex
 If you find our work helpful for your research, please consider citing the following BibTeX entry.   
-```
+```bibtex
 @misc{zhang2022dino,
       title={DINO: DETR with Improved DeNoising Anchor Boxes for End-to-End Object Detection}, 
       author={Hao Zhang and Feng Li and Shilong Liu and Lei Zhang and Hang Su and Jun Zhu and Lionel M. Ni and Heung-Yeung Shum},
@@ -253,5 +255,22 @@ If you find our work helpful for your research, please consider citing the follo
       eprint={2203.03605},
       archivePrefix={arXiv},
       primaryClass={cs.CV}
+}
+
+@inproceedings{li2022dn,
+      title={Dn-detr: Accelerate detr training by introducing query denoising},
+      author={Li, Feng and Zhang, Hao and Liu, Shilong and Guo, Jian and Ni, Lionel M and Zhang, Lei},
+      booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+      pages={13619--13627},
+      year={2022}
+}
+
+@inproceedings{
+      liu2022dabdetr,
+      title={{DAB}-{DETR}: Dynamic Anchor Boxes are Better Queries for {DETR}},
+      author={Shilong Liu and Feng Li and Hao Zhang and Xiao Yang and Xianbiao Qi and Hang Su and Jun Zhu and Lei Zhang},
+      booktitle={International Conference on Learning Representations},
+      year={2022},
+      url={https://openreview.net/forum?id=oMI9PjOb9Jl}
 }
 ```

@@ -109,6 +109,17 @@ class MSDeformAttn(nn.Module):
         else:
             raise ValueError(
                 'Last dim of reference_points must be 2 or 4, but get {} instead.'.format(reference_points.shape[-1]))
+
+        # for amp
+        if value.dtype == torch.float16:
+            # for mixed precision
+            output = MSDeformAttnFunction.apply(
+            value.to(torch.float32), input_spatial_shapes, input_level_start_index, sampling_locations.to(torch.float32), attention_weights, self.im2col_step)
+            output = output.to(torch.float16)
+            output = self.output_proj(output)
+            return output
+
+
         output = MSDeformAttnFunction.apply(
             value, input_spatial_shapes, input_level_start_index, sampling_locations, attention_weights, self.im2col_step)
         output = self.output_proj(output)

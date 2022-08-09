@@ -8,8 +8,9 @@ This is the official implementation of the paper "[DINO: DETR with Improved DeNo
 Authors: [Hao Zhang](https://scholar.google.com/citations?user=B8hPxMQAAAAJ&hl=zh-CN)\*, [Feng Li](https://fengli-ust.github.io/)\*, [Shilong Liu](https://www.lsl.zone/)\*, [Lei Zhang](https://www.leizhang.org/), [Hang Su](https://www.suhangss.me/), [Jun Zhu](https://ml.cs.tsinghua.edu.cn/~jun/index.shtml), [Lionel M. Ni](https://www.cse.ust.hk/~ni/), [Heung-Yeung Shum](https://scholar.google.com.hk/citations?user=9akH-n8AAAAJ&hl=en)
 
 # News
-[2022/7/14]: We released the code with Swin-L and Convnext backbone. </br> 
-[2022/7/10]: We released the code and checkpoints with Resnet-50 backbone. </br>
+[2022/8/6]: We update Swin-L model results without techniques such as O365 pre-training, large image size, and multi-scale test. We also upload the corresponding checkpoints to [Google Drive.](https://drive.google.com/drive/folders/1qD5m1NmK0kjE5hh-G17XUX751WsEG-h_?usp=sharing) Our 5-scale model without any tricks obtains 58.5 AP on COCO val.</br>
+[2022/7/14]: We release the code with Swin-L and Convnext backbone. </br> 
+[2022/7/10]: We release the code and checkpoints with Resnet-50 backbone. </br>
 [2022/6/7]: We release a unified detection and segmentation model [Mask DINO](https://arxiv.org/pdf/2206.02777.pdf) that achieves the best results on all the three segmentation tasks (**54.7** AP on [COCO instance leaderboard](https://paperswithcode.com/sota/instance-segmentation-on-coco), **59.5** PQ on [COCO panoptic leaderboard](https://paperswithcode.com/sota/panoptic-segmentation-on-coco-test-dev), and **60.8** mIoU on [ADE20K semantic leaderboard](https://paperswithcode.com/sota/semantic-segmentation-on-ade20k))! Code will be available [here](https://github.com/IDEACVR/MaskDINO).
 </br>
 [2022/5/28] Code for [DN-DETR](https://arxiv.org/pdf/2203.01305.pdf) is available [here](https://github.com/IDEA-opensource/DN-DETR).
@@ -65,6 +66,22 @@ We have put our model checkpoints here [[model zoo in Google Drive]](https://dri
       <td>49.4</td>
       <td><a href="https://drive.google.com/drive/folders/1qD5m1NmK0kjE5hh-G17XUX751WsEG-h_?usp=sharing">Google Drive</a>&nbsp/&nbsp<a href="https://pan.baidu.com/s/1St5rvfgfPwpnPuf_Oe6DpQ">BaiDu</a>&nbsp;</td>
       <td>Table 1</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>DINO-4scale</td>
+      <td>Swin-L</td>
+      <td>56.8</td>
+      <td><a href="https://drive.google.com/drive/folders/1qD5m1NmK0kjE5hh-G17XUX751WsEG-h_?usp=sharing">Google Drive</a>&nbsp</td>
+      <td></td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>DINO-5scale</td>
+      <td>Swin-L</td>
+      <td>57.3</td>
+      <td><a href="https://drive.google.com/drive/folders/1qD5m1NmK0kjE5hh-G17XUX751WsEG-h_?usp=sharing">Google Drive</a>&nbsp</td>
+      <td></td>
     </tr>
   </tbody>
 </table>
@@ -129,6 +146,22 @@ We have put our model checkpoints here [[model zoo in Google Drive]](https://dri
       <td>51.2</td>
       <td><a href="https://drive.google.com/drive/folders/1qD5m1NmK0kjE5hh-G17XUX751WsEG-h_?usp=sharing">Google Drive</a>&nbsp/&nbsp<a href="https://pan.baidu.com/s/1St5rvfgfPwpnPuf_Oe6DpQ">BaiDu</a>&nbsp;</td>
       <td>Table 2</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>DINO-4scale</td>
+      <td>Swin-L</td>
+      <td>58.0</td>
+      <td><a href="https://drive.google.com/drive/folders/1qD5m1NmK0kjE5hh-G17XUX751WsEG-h_?usp=sharing">Google Drive</a>&nbsp</td>
+      <td></td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>DINO-5scale</td>
+      <td>Swin-L</td>
+      <td>58.5</td>
+      <td><a href="https://drive.google.com/drive/folders/1qD5m1NmK0kjE5hh-G17XUX751WsEG-h_?usp=sharing">Google Drive</a>&nbsp</td>
+      <td></td>
     </tr>
   </tbody>
 </table>

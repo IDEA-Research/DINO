@@ -134,38 +134,50 @@ We have put our model checkpoints here [[model zoo in Google Drive]](https://dri
 </table>
 
 ## Installation
-We use the environment same to DAB-DETR and DN-DETR to run DINO. If you have run DN-DETR or DAB-DETR, you can skip this step.
-We test our models under ```python=3.7.3,pytorch=1.9.0,cuda=11.1```. Other versions might be available as well.
 
-1. Clone this repo
-```sh
-git https://github.com/IDEACVR/DINO
-cd DINO
-```
+<details>
+  <summary>Installation</summary>
+  
+  We use the environment same to DAB-DETR and DN-DETR to run DINO. If you have run DN-DETR or DAB-DETR, you can skip this step. 
+  We test our models under ```python=3.7.3,pytorch=1.9.0,cuda=11.1```. Other versions might be available as well. Click the `Details` below for more details.
 
-2. Install Pytorch and torchvision
+   1. Clone this repo
+   ```sh
+   git https://github.com/IDEACVR/DINO
+   cd DINO
+   ```
 
-Follow the instruction on https://pytorch.org/get-started/locally/.
-```sh
-# an example:
-conda install -c pytorch pytorch torchvision
-```
+   2. Install Pytorch and torchvision
 
-3. Install other needed packages
-```sh
-pip install -r requirements.txt
-```
+   Follow the instruction on https://pytorch.org/get-started/locally/.
+   ```sh
+   # an example:
+   conda install -c pytorch pytorch torchvision
+   ```
 
-4. Compiling CUDA operators
-```sh
-cd models/dino/ops
-python setup.py build install
-# unit test (should see all checking is True)
-python test.py
-cd ../../..
-```
+   3. Install other needed packages
+   ```sh
+   pip install -r requirements.txt
+   ```
+
+   4. Compiling CUDA operators
+   ```sh
+   cd models/dino/ops
+   python setup.py build install
+   # unit test (should see all checking is True)
+   python test.py
+   cd ../../..
+   ```
+</details>
+
+
+
 
 ## Data
+
+<details>
+  <summary>Data</summary>
+
 Please download [COCO 2017](https://cocodataset.org/) dataset and organize them as following:
 ```
 COCODIR/
@@ -176,27 +188,52 @@ COCODIR/
   	└── instances_val2017.json
 ```
 
+</details>
+
 
 ## Run
-We use DINO 4-scale model trained for 12 epochs as an example to demonstrate how to evaluate and train our model.
 
-### Eval our pretrianed model
-Download our DINO model checkpoint "checkpoint0011_4scale.pth" from [this link](https://drive.google.com/drive/folders/1qD5m1NmK0kjE5hh-G17XUX751WsEG-h_?usp=sharing) and perform the command below. You can expect to get the final AP about 49.0.
-```sh
-bash scripts/DINO_eval.sh /path/to/your/COCODIR /path/to/your/checkpoint
-```
-### Inference and Visualizations
+<details>
+  <summary>1. Eval our pretrianed models</summary>
+
+  <!-- ### Eval our pretrianed model -->
+  Download our DINO model checkpoint "checkpoint0011_4scale.pth" from [this link](https://drive.google.com/drive/folders/1qD5m1NmK0kjE5hh-G17XUX751WsEG-h_?usp=sharing) and perform the command below. You can expect to get the final AP about 49.0.
+  ```sh
+  bash scripts/DINO_eval.sh /path/to/your/COCODIR /path/to/your/checkpoint
+  ```
+
+</details>
+
+
+
+<details>
+  <summary>2. Inference and Visualizations</summary>
+
 For inference and visualizations, we provide a [notebook](inference_and_visualization.ipynb) as an example.
 
-### Train the 4scale model for 12 epochs
+</details>
+
+
+
+<details>
+  <summary>3. Train a 4-scale model for 12 epochs</summary>
+
+We use the DINO 4-scale model trained for 12 epochs as an example to demonstrate how to evaluate and train our model.
+
 You can also train our model on a single process:
 ```sh
 bash scripts/DINO_train.sh /path/to/your/COCODIR
 ```
-### Distributed Run
-However, as the training is time consuming, we suggest to train the model on multi-device.
 
-If you plan to train the models on a cluster with Slurm, here is an example command for training:
+</details>
+
+
+<details>
+  <summary>4. Distributed Run</summary>
+
+As the training is time consuming, we suggest to train the model on multi-device.
+
+If you plan to train the models **on a cluster with Slurm**, here is an example command for training:
 ```sh
 # for DINO-4scale: 49.0
 bash scripts/DINO_train_submitit.sh /path/to/your/COCODIR
@@ -207,11 +244,33 @@ bash scripts/DINO_train_submitit_5scale.sh /path/to/your/COCODIR
 Notes:
 The results are sensitive to the batch size. We use 16(2 images each GPU x 8 GPUs for DINO-4scale and 1 images each GPU x 16 GPUs for DINO-5scale) by default.
 
-Or run with multi-processes on a single node:
+Or run with **multi-processes on a single node**:
 ```sh
 # for DINO-4scale: 49.0
 bash scripts/DINO_train_dist.sh /path/to/your/COCODIR
 ```
+
+</details>
+
+</details>
+
+
+<details>
+  <summary>5. Training/Fine-tuning a DINO on your custom dataset</summary>
+
+To train a DINO on a custom dataset **from scratch**, you need to tune two parameters in a config file:
+- Tuning the `num_classes` to the number of classes to detect in your dataset.
+- Tuning the parameter `dn_labebook_size` to ensure that `dn_labebook_size >= num_classes + 1`
+
+To **leverage our pre-trained models** for model fine-tuning, we suggest add two more commands in a bash:
+- `--pretrain_model_path /path/to/a/pretrianed/model`. specify a pre-trained model.
+- `--finetune_ignore label_enc.weight class_embed`. ignore some inconsistent parameters.
+
+
+</details>
+
+
+
 # Links
 Our model is based on [DAB-DETR](https://arxiv.org/abs/2201.12329) and [DN-DETR](https://arxiv.org/abs/2203.01305).
 <p>

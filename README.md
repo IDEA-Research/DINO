@@ -9,6 +9,14 @@ Authors: [Hao Zhang](https://scholar.google.com/citations?user=B8hPxMQAAAAJ&hl=z
 
 # News
 [2022/9/22]: We release a toolbox [**detrex**](https://github.com/IDEA-Research/detrex) that provides state-of-the-art Transformer-based detection algorithms. It includes DINO **with better performance**. Welcome to use it! </br>
+[2022/9/18]: We organize ECCV Workshop [*Computer Vision in the Wild (CVinW)*](https://computer-vision-in-the-wild.github.io/eccv-2022/), where two challenges are hosted to evaluate the zero-shot, few-shot and full-shot performance of pre-trained vision models in downstream tasks:
+
+  - [``*Image Classification in the Wild (ICinW)*''](https://eval.ai/web/challenges/challenge-page/1832/overview) Challenge evaluates on 20 image classification tasks.
+  - [``*Object Detection in the Wild (ODinW)*''](https://eval.ai/web/challenges/challenge-page/1839/overview) Challenge evaluates on 35 object detection tasks.
+
+$\qquad$ [ < img src="https://computer-vision-in-the-wild.github.io/eccv-2022/static/eccv2022/img/ECCV-logo3.png" width=10%/> [Workshop]](https://computer-vision-in-the-wild.github.io/eccv-2022/)    $\qquad$    [< img src="https://evalai.s3.amazonaws.com/media/logos/4e939412-a9c0-46bd-9797-5ba0bd0a9095.jpg" width=10%/> [IC Challenge] ](https://eval.ai/web/challenges/challenge-page/1832/overview)
+$\qquad$    [< img src="https://evalai.s3.amazonaws.com/media/logos/3a31ae6e-a990-48fb-b2c3-1e7da9d17a20.jpg" width=10%/> [OD Challenge] ](https://eval.ai/web/challenges/challenge-page/1839/overview) 
+</br> 
 [2022/8/6]: We update Swin-L model results without techniques such as O365 pre-training, large image size, and multi-scale test. We also upload the corresponding checkpoints to [Google Drive.](https://drive.google.com/drive/folders/1qD5m1NmK0kjE5hh-G17XUX751WsEG-h_?usp=sharing) Our 5-scale model without any tricks obtains 58.5 AP on COCO val.</br>
 [2022/7/14]: We release the code with Swin-L and Convnext backbone. </br> 
 [2022/7/10]: We release the code and checkpoints with Resnet-50 backbone. </br>

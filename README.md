@@ -8,7 +8,7 @@ This is the official implementation of the paper "[DINO: DETR with Improved DeNo
 Authors: [Hao Zhang](https://scholar.google.com/citations?user=B8hPxMQAAAAJ&hl=zh-CN)\*, [Feng Li](https://fengli-ust.github.io/)\*, [Shilong Liu](https://www.lsl.zone/)\*, [Lei Zhang](https://www.leizhang.org/), [Hang Su](https://www.suhangss.me/), [Jun Zhu](https://ml.cs.tsinghua.edu.cn/~jun/index.shtml), [Lionel M. Ni](https://www.cse.ust.hk/~ni/), [Heung-Yeung Shum](https://scholar.google.com.hk/citations?user=9akH-n8AAAAJ&hl=en)
 
 # News
-[2022/12/02]: Code for [Mask DINO](https://github.com/IDEA-Research/MaskDINO) is released! Mask DINO further Achieves **51.7** and **59.0** box AP on COCO with a ResNet-50 and SwinL without extra detection data, **outperforming DINO** under the same setting!. </br>
+[2022/12/02]: Code for [Mask DINO](https://github.com/IDEA-Research/MaskDINO) is released (also in [detrex](https://github.com/IDEA-Research/detrex/tree/main/projects/maskdino))! Mask DINO further Achieves **51.7** and **59.0** box AP on COCO with a ResNet-50 and SwinL without extra detection data, **outperforming DINO** under the same setting!. </br>
 [2022/9/22]: We release a toolbox <font size=4>[**detrex**](https://github.com/IDEA-Research/detrex)</font> that provides state-of-the-art Transformer-based detection algorithms. It includes DINO **with better performance**. Welcome to use it! </br>
   - Supports Now: [DETR](https://arxiv.org/abs/2005.12872), [Deformble DETR](https://arxiv.org/abs/2010.04159), [Conditional DETR](https://arxiv.org/abs/2108.06152), [DAB-DETR](https://arxiv.org/abs/2201.12329), [DN-DETR](https://arxiv.org/abs/2203.01305), [DINO](https://arxiv.org/abs/2203.03605).
 

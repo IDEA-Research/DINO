@@ -188,7 +188,7 @@ We have put our model checkpoints here [[model zoo in Google Drive]](https://dri
 
    1. Clone this repo
    ```sh
-   git clone https://github.com/IDEA-Research/DINO
+   git clone https://github.com/IDEA-Research/DINO.git
    cd DINO
    ```
 

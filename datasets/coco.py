@@ -25,8 +25,6 @@ from util.box_ops import box_cxcywh_to_xyxy, box_iou
 
 __all__ = ['build']
 
-######################################################
-# some hookers for training
 
 class label2compat():
     def __init__(self) -> None:
@@ -43,6 +41,7 @@ class label2compat():
             return target, img
         else:
             return target
+
 
 class label_compat2onehot():
     def __init__(self, num_class=80, num_output_objs=1):
@@ -72,6 +71,7 @@ class label_compat2onehot():
         else:
             return target
 
+
 class box_label_catter():
     def __init__(self):
         pass
@@ -86,15 +86,6 @@ class box_label_catter():
         else:
             return target
 
-def label2onehot(label, num_classes):
-    """
-    label: Tensor(K)
-    """
-    res = torch.zeros(num_classes)
-    for i in label:
-        itm = int(i.item())
-        res[itm] = 1.0
-    return res
 
 class RandomSelectBoxlabels():
     def __init__(self, num_classes, leave_one_out=False, blank_prob=0.8,
@@ -247,8 +238,6 @@ class RandomCutout():
         return target, img
 
 
-
-
 class RandomSelectBoxes():
     def __init__(self, num_class=80) -> None:
         Warning("This is such a slow function and will be deprecated soon!!!")
@@ -271,12 +260,12 @@ class RandomSelectBoxes():
         for idx, item in enumerate(boxs_list_tensor):
             ncnt = item.shape[0]
             nselect = int(random.random() * ncnt) # close in both sides, much faster than random.randint
-            # import ipdb; ipdb.set_trace()
+
             item = item[torch.randperm(ncnt)]
             # random.shuffle(item)
             box_known.append(item[:nselect])
             box_unknown.append(item[nselect:])
-        # import ipdb; ipdb.set_trace()
+
         # box_known_tensor = [torch.stack(i) if len(i) > 0 else torch.Tensor(0,4) for i in box_known]
         # box_unknown_tensor = [torch.stack(i) if len(i) > 0 else torch.Tensor(0,4) for i in box_unknown]
         # print('box_unknown_tensor:', box_unknown_tensor)
@@ -285,34 +274,16 @@ class RandomSelectBoxes():
         return target, img
 
 
+def label2onehot(label, num_classes):
+    """
+    label: Tensor(K)
+    """
+    res = torch.zeros(num_classes)
+    for i in label:
+        itm = int(i.item())
+        res[itm] = 1.0
+    return res
 
-
-
-
-        
-
-
-# class BoxCatter():
-#     def __init__(self) -> None:
-#         pass
-
-#     def __call__(self, target, img):
-#         """
-#         known_box_cat:
-#             - Tensor(k*5), 
-#                 * Tensor[:, :4]: bbox,  
-#                 * Tensor[:, -1]: label
-#         """
-#         known_box = target['known_box']
-#         boxes_list = []
-#         for idx, boxes in enumerate(known_box):
-#             nbox = boxes.shape[0]
-#             boxes_idx = torch.cat([boxes, torch.Tensor([idx] * nbox).unsqueeze(1)], 1)
-#             boxes_list.append(boxes_idx)
-#         known_box_cat = torch.cat(boxes_list, 0)
-#         target['known_box_cat'] = known_box_cat
-#         return target, img
-        
 
 class MaskCrop():
     def __init__(self) -> None:
@@ -322,7 +293,7 @@ class MaskCrop():
         known_box = target['known_box']
         h,w = img.shape[1:] # h,w
         # imgsize = target['orig_size'] # h,w
-        # import ipdb; ipdb.set_trace()
+
         scale = torch.Tensor([w, h, w, h])
 
         # _cnt = 0
@@ -338,9 +309,6 @@ class MaskCrop():
         return target, img
 
 
-
-        
-
 dataset_hook_register = {
     'label2compat': label2compat,
     'label_compat2onehot': label_compat2onehot,
@@ -350,8 +318,7 @@ dataset_hook_register = {
     'MaskCrop': MaskCrop,
     'BboxPertuber': BboxPertuber,
 }
-                
-##################################################################################
+
 
 class CocoDetection(torchvision.datasets.CocoDetection):
     def __init__(self, img_folder, ann_file, transforms, return_masks, aux_target_hacks=None):
@@ -511,11 +478,6 @@ def make_coco_transforms(image_set, fix_size=False, strong_aug=False, args=None)
         max_size = int(max_size*data_aug_scale_overlap)
         scales2_resize = [int(i*data_aug_scale_overlap) for i in scales2_resize]
         scales2_crop = [int(i*data_aug_scale_overlap) for i in scales2_crop]
-    # else:
-    #     scales = getattr(args, 'data_aug_scales', scales)
-    #     max_size = getattr(args, 'data_aug_max_size', max_size)
-    #     scales2_resize = getattr(args, 'data_aug_scales2_resize', scales2_resize)
-    #     scales2_crop = getattr(args, 'data_aug_scales2_crop', scales2_crop)
 
     datadict_for_print = {
         'scales': scales,
@@ -534,51 +496,6 @@ def make_coco_transforms(image_set, fix_size=False, strong_aug=False, args=None)
                 # T.RandomResize([(512, 512)]),
                 normalize,
             ])
-        
-        # if os.environ.get('IPDB_DEBUG_SHILONG') == 'INFO':
-        #     import datasets.sltransform as SLT
-        #     return T.Compose([
-        #         T.RandomHorizontalFlip(),
-        #         T.RandomSelect(
-        #             T.RandomResize(scales, max_size=1333),
-        #             T.Compose([
-        #                 T.RandomResize([400, 500, 600]),
-        #                 T.RandomSizeCrop(384, 600),
-        #                 T.RandomResize(scales, max_size=1333),
-        #             ])
-        #         ),
-        #         SLT.RandomCropDebug(),
-        #         SLT.LightingNoise(),
-        #         SLT.AdjustBrightness(2),
-        #         SLT.AdjustContrast(2),
-        #         SLT.Albumentations(),
-        #         normalize,
-        #     ])
-
-        # if strong_aug:
-        #     import datasets.sltransform as SLT
-        #     return T.Compose([
-        #         T.RandomHorizontalFlip(),
-        #         T.RandomSelect(
-        #             T.RandomResize(scales, max_size=max_size),
-        #             T.Compose([
-        #                 T.RandomResize(scales2_resize),
-        #                 T.RandomSizeCrop(*scales2_crop),
-        #                 T.RandomResize(scales, max_size=max_size),
-        #             ])
-        #         ),
-        #         T.RandomSelect(
-        #             SLT.RandomSelectMulti([
-        #                 SLT.RandomCrop(),
-        #                 SLT.LightingNoise(),
-        #                 SLT.AdjustBrightness(2),
-        #                 SLT.AdjustContrast(2),
-        #             ]),                   
-        #             SLT.Albumentations(),
-        #             p=0.05
-        #         ),
-        #         normalize,
-        #     ])
 
         if strong_aug:
             import datasets.sltransform as SLT
@@ -595,17 +512,10 @@ def make_coco_transforms(image_set, fix_size=False, strong_aug=False, args=None)
                 ),
                 SLT.RandomSelectMulti([
                     SLT.RandomCrop(),
-                    # SLT.Rotate(10),
                     SLT.LightingNoise(),
                     SLT.AdjustBrightness(2),
                     SLT.AdjustContrast(2),
-                ]),              
-                # # for debug only  
-                # SLT.RandomCrop(),
-                # SLT.LightingNoise(),
-                # SLT.AdjustBrightness(2),
-                # SLT.AdjustContrast(2),
-                # SLT.Rotate(10),
+                ]),
                 normalize,
             ])
         
@@ -701,7 +611,6 @@ def get_aux_target_hacks_list(image_set, args):
 
 def build(image_set, args):
     root = Path(args.coco_path)
-    # assert root.exists(), f'provided COCO path {root} does not exist'
     mode = 'instances'
     PATHS = {
         "train": (root / "train2017", root / "annotations" / f'{mode}_train2017.json'),
@@ -734,22 +643,11 @@ def build(image_set, args):
 
 
 if __name__ == "__main__":
-    # # aux_target_hacks_list = []
-    # dataset = CocoDetection('/comp_robot/cv_public_dataset/COCO2017/train2017', 
-    #         "/comp_robot/cv_public_dataset/COCO2017/annotations/instances_train2017.json", 
-    #         transforms=make_coco_transforms('train'), 
-    #         return_masks=False,
-    #     )
-
     # Objects365 Val example
     dataset_o365 = CocoDetection(
-            '/comp_robot/cv_public_dataset/Objects365/train/', 
-            "/comp_robot/cv_public_dataset/Objects365/slannos/anno_preprocess_shilong_train_v2.json", 
+            '/path/Objects365/train/',
+            "/path/Objects365/slannos/anno_preprocess_train_v2.json",
             transforms=None,
             return_masks=False,
         )
     print('len(dataset_o365):', len(dataset_o365))
-
-    import ipdb; ipdb.set_trace()
-
-    # ['/raid/liushilong/data/Objects365/train/patch16/objects365_v2_00908726.jpg', '/raid/liushilong/data/Objects365/train/patch6/objects365_v1_00320532.jpg', '/raid/liushilong/data/Objects365/train/patch6/objects365_v1_00320534.jpg']

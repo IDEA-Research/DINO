@@ -111,7 +111,7 @@ def rotate(image, boxes, angle):
     AffineMatrix[0, 2] += (nW / 2) - cx
     AffineMatrix[1, 2] += (nH / 2) - cy
     
-    # import ipdb; ipdb.set_trace()
+
     #Apply affine transform
     rotate_corners = torch.mm(AffineMatrix, corners.t().to(torch.float64)).t()
     rotate_corners = rotate_corners.reshape(-1,8)
@@ -135,7 +135,7 @@ def rotate(image, boxes, angle):
     scale_y = new_image.height / h
     
     #Resize new image to (w, h)
-    # import ipdb; ipdb.set_trace()
+
     new_image = new_image.resize((w, h))
     
     #Resize boxes
@@ -174,9 +174,6 @@ class RandomCrop:
 
     def __call__(self, img, target):
         w,h = img.size
-        # whwh = torch.Tensor([w, h, w, h])
-        # if os.environ.get('IPDB_DEBUG_SHILONG') == 'INFO':
-        #     import ipdb; ipdb.set_trace()
         try:
             boxes_xyxy = target['boxes']
             labels = target['labels']

@@ -171,7 +171,7 @@ class DeformableTransformer(nn.Module):
 
         # encoder
         memory = self.encoder(src_flatten, spatial_shapes, level_start_index, valid_ratios, lvl_pos_embed_flatten, mask_flatten)
-        # import ipdb; ipdb.set_trace()
+
 
         # prepare input for decoder
         bs, _, c = memory.shape
@@ -204,7 +204,7 @@ class DeformableTransformer(nn.Module):
             init_reference_out = reference_points
 
         # decoder
-        # import ipdb; ipdb.set_trace()
+
         hs, inter_references = self.decoder(tgt, reference_points, memory,
                                             spatial_shapes, level_start_index, valid_ratios, 
                                             query_pos=query_embed if not self.use_dab else None, 
@@ -261,7 +261,7 @@ class DeformableTransformerEncoderLayer(nn.Module):
 
     def forward(self, src, pos, reference_points, spatial_shapes, level_start_index, key_padding_mask=None):
         # self attention
-        # import ipdb; ipdb.set_trace()
+
         src2 = self.self_attn(self.with_pos_embed(src, pos), reference_points, src, spatial_shapes, level_start_index, key_padding_mask)
         src = src + self.dropout1(src2)
         src = self.norm1(src)
@@ -316,7 +316,7 @@ class DeformableTransformerEncoder(nn.Module):
         """
         output = src
         # bs, sum(hi*wi), 256
-        # import ipdb; ipdb.set_trace()
+
         if self.num_layers > 0:
             reference_points = self.get_reference_points(spatial_shapes, valid_ratios, device=src.device)
         for _, layer in enumerate(self.layers):
@@ -412,14 +412,14 @@ class DeformableTransformerDecoderLayer(nn.Module):
             ):
         # self attention
         if self.self_attn is not None:
-            # import ipdb; ipdb.set_trace()
+
             if self.decoder_sa_type == 'sa':
                 q = k = self.with_pos_embed(tgt, tgt_query_pos)
                 tgt2 = self.self_attn(q, k, tgt, attn_mask=self_attn_mask)[0]
                 tgt = tgt + self.dropout2(tgt2)
                 tgt = self.norm2(tgt)
             elif self.decoder_sa_type == 'ca_label':
-                # import ipdb; ipdb.set_trace()
+
                 # q = self.with_pos_embed(tgt, tgt_query_pos)
                 bs = tgt.shape[1]
                 k = v = self.label_embedding.weight[:, None, :].repeat(1, bs, 1)
@@ -457,7 +457,7 @@ class DeformableTransformerDecoderLayer(nn.Module):
                 cross_attn_mask: Optional[Tensor] = None, # mask used for cross-attention
             ):
         # cross attention
-        # import ipdb; ipdb.set_trace()
+
         if self.key_aware_type is not None:
 
             if self.key_aware_type == 'mean':
@@ -512,78 +512,6 @@ class DeformableTransformerDecoderLayer(nn.Module):
 
         return tgt
 
-    # def forward(self, 
-    #             # for tgt
-    #             tgt: Optional[Tensor],  # nq, bs, d_model
-    #             tgt_query_pos: Optional[Tensor] = None, # pos for query. MLP(Sine(pos))
-    #             tgt_query_sine_embed: Optional[Tensor] = None, # pos for query. Sine(pos)
-    #             tgt_key_padding_mask: Optional[Tensor] = None,
-    #             tgt_reference_points: Optional[Tensor] = None, # nq, bs, 4
-
-    #             # for memory
-    #             memory: Optional[Tensor] = None, # hw, bs, d_model
-    #             memory_key_padding_mask: Optional[Tensor] = None,
-    #             memory_level_start_index: Optional[Tensor] = None, # num_levels
-    #             memory_spatial_shapes: Optional[Tensor] = None, # bs, num_levels, 2
-    #             memory_pos: Optional[Tensor] = None, # pos for memory
-
-    #             # sa
-    #             self_attn_mask: Optional[Tensor] = None, # mask used for self-attention
-    #             cross_attn_mask: Optional[Tensor] = None, # mask used for cross-attention
-    #         ):
-    #     """
-    #     Input:
-    #         - tgt/tgt_query_pos: nq, bs, d_model
-    #         - 
-    #     """
-    #     assert cross_attn_mask is None
-
-    #     # self attention
-    #     if self.self_attn is not None:
-    #         # import ipdb; ipdb.set_trace()
-    #         if self.decoder_sa_type == 'sa':
-    #             q = k = self.with_pos_embed(tgt, tgt_query_pos)
-    #             tgt2 = self.self_attn(q, k, tgt, attn_mask=self_attn_mask)[0]
-    #             tgt = tgt + self.dropout2(tgt2)
-    #             tgt = self.norm2(tgt)
-    #         elif self.decoder_sa_type == 'ca_label':
-    #             # import ipdb; ipdb.set_trace()
-    #             # q = self.with_pos_embed(tgt, tgt_query_pos)
-    #             bs = tgt.shape[1]
-    #             k = v = self.label_embedding.weight[:, None, :].repeat(1, bs, 1)
-    #             tgt2 = self.self_attn(tgt, k, v, attn_mask=self_attn_mask)[0]
-    #             tgt = tgt + self.dropout2(tgt2)
-    #             tgt = self.norm2(tgt)
-    #         elif self.decoder_sa_type == 'ca_content':
-    #             tgt2 = self.self_attn(self.with_pos_embed(tgt, tgt_query_pos).transpose(0, 1),
-    #                         tgt_reference_points.transpose(0, 1).contiguous(),
-    #                         memory.transpose(0, 1), memory_spatial_shapes, memory_level_start_index, memory_key_padding_mask).transpose(0, 1)
-    #             tgt = tgt + self.dropout2(tgt2)
-    #             tgt = self.norm2(tgt)
-    #         else:
-    #             raise NotImplementedError("Unknown decoder_sa_type {}".format(self.decoder_sa_type))
-
-
-    #     # cross attention
-    #     # import ipdb; ipdb.set_trace()
-    #     if self.key_aware_type is not None:
-    #         if self.key_aware_type == 'mean':
-    #             tgt = tgt + memory.mean(0, keepdim=True)
-    #         elif self.key_aware_type == 'proj_mean':
-    #             tgt = tgt + self.key_aware_proj(memory).mean(0, keepdim=True)
-    #         else:
-    #             raise NotImplementedError("Unknown key_aware_type: {}".format(self.key_aware_type))
-    #     tgt2 = self.cross_attn(self.with_pos_embed(tgt, tgt_query_pos).transpose(0, 1),
-    #                            tgt_reference_points.transpose(0, 1).contiguous(),
-    #                            memory.transpose(0, 1), memory_spatial_shapes, memory_level_start_index, memory_key_padding_mask).transpose(0, 1)
-    #     tgt = tgt + self.dropout1(tgt2)
-    #     tgt = self.norm1(tgt)
-
-    #     # ffn
-    #     tgt = self.forward_ffn(tgt)
-
-    #     return tgt
-
 
 class DeformableTransformerDecoder(nn.Module):
     def __init__(self, decoder_layer, num_layers, return_intermediate=False, use_dab=False, d_model=256, query_dim=4):
@@ -613,7 +541,7 @@ class DeformableTransformerDecoder(nn.Module):
         intermediate = []
         intermediate_reference_points = [reference_points]
         for layer_id, layer in enumerate(self.layers):
-            # import ipdb; ipdb.set_trace()
+
             if reference_points.shape[-1] == 4:
                 reference_points_input = reference_points[:, :, None] \
                                          * torch.cat([src_valid_ratios, src_valid_ratios], -1)[:, None] # bs, nq, 4, 4
@@ -622,7 +550,7 @@ class DeformableTransformerDecoder(nn.Module):
                 reference_points_input = reference_points[:, :, None] * src_valid_ratios[:, None]
                 
             if self.use_dab:
-                # import ipdb; ipdb.set_trace()
+
                 query_sine_embed = gen_sineembed_for_position(reference_points_input[:, :, 0, :]) # bs, nq, 256*2 
                 raw_query_pos = self.ref_point_head(query_sine_embed) # bs, nq, 256
                 pos_scale = self.query_scale(output) if layer_id != 0 else 1

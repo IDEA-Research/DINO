@@ -238,7 +238,7 @@ class MetricLogger(object):
         for obj in iterable:
             data_time.update(time.time() - end)
             yield obj
-            # import ipdb; ipdb.set_trace()
+
             iter_time.update(time.time() - end)
             if i % print_freq == 0 or i == len(iterable) - 1:
                 eta_seconds = iter_time.global_avg * (len(iterable) - i)
@@ -283,7 +283,7 @@ def get_sha():
 
 
 def collate_fn(batch):
-    # import ipdb; ipdb.set_trace()
+
     batch = list(zip(*batch))
     batch[0] = nested_tensor_from_tensor_list(batch[0])
     return tuple(batch)

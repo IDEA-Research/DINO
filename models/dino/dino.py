@@ -174,7 +174,6 @@ class DINO(nn.Module):
 
         self.decoder_sa_type = decoder_sa_type
         assert decoder_sa_type in ['sa', 'ca_label', 'ca_content']
-        # self.replace_sa_with_double_ca = replace_sa_with_double_ca
         if decoder_sa_type == 'ca_label':
             self.label_embedding = nn.Embedding(num_classes, hidden_dim)
             for layer in self.transformer.decoder.layers:
@@ -194,14 +193,12 @@ class DINO(nn.Module):
 
     def init_ref_points(self, use_num_queries):
         self.refpoint_embed = nn.Embedding(use_num_queries, self.query_dim)
-
         if self.random_refpoints_xy:
-            # import ipdb; ipdb.set_trace()
+
             self.refpoint_embed.weight.data[:, :2].uniform_(0,1)
             self.refpoint_embed.weight.data[:, :2] = inverse_sigmoid(self.refpoint_embed.weight.data[:, :2])
             self.refpoint_embed.weight.data[:, :2].requires_grad = False
 
-        
         if self.fix_refpoints_hw > 0:
             print("fix_refpoints_hw: {}".format(self.fix_refpoints_hw))
             assert self.random_refpoints_xy
@@ -261,7 +258,6 @@ class DINO(nn.Module):
                 masks.append(mask)
                 poss.append(pos_l)
 
-
         if self.dn_number > 0 or targets is not None:
             input_query_label, input_query_bbox, attn_mask, dn_meta =\
                 prepare_for_cdn(dn_args=(targets, self.dn_number, self.dn_label_noise_ratio, self.dn_box_noise_scale),
@@ -273,7 +269,7 @@ class DINO(nn.Module):
 
         hs, reference, hs_enc, ref_enc, init_box_proposal = self.transformer(srcs, masks, input_query_bbox, poss,input_query_label,attn_mask)
         # In case num object=0
-        hs[0]+=self.label_enc.weight[0,0]*0.0
+        hs[0] += self.label_enc.weight[0,0]*0.0
 
         # deformable-detr-like anchor update
         # reference_before_sigmoid = inverse_sigmoid(reference[:-1]) # n_dec, bs, nq, 4
@@ -285,8 +281,6 @@ class DINO(nn.Module):
             outputs_coord_list.append(layer_outputs_unsig)
         outputs_coord_list = torch.stack(outputs_coord_list)        
 
-
-        # outputs_class = self.class_embed(hs)
         outputs_class = torch.stack([layer_cls_embed(layer_hs) for
                                      layer_cls_embed, layer_hs in zip(self.class_embed, hs)])
         if self.dn_number > 0 and dn_meta is not None:
@@ -307,7 +301,6 @@ class DINO(nn.Module):
             out['interm_outputs_for_matching_pre'] = {'pred_logits': interm_class, 'pred_boxes': init_box_proposal}
 
             # prepare enc outputs
-            # import ipdb; ipdb.set_trace()
             if hs_enc.shape[0] > 1:
                 enc_outputs_coord = []
                 enc_outputs_class = []
@@ -320,10 +313,6 @@ class DINO(nn.Module):
                     enc_outputs_coord.append(layer_enc_outputs_coord)
                     enc_outputs_class.append(layer_enc_outputs_class)
 
-                # enc_delta_unsig = self.enc_bbox_embed(hs_enc[:-1])
-                # enc_outputs_unsig = enc_delta_unsig + ref_enc[:-1]
-                # enc_outputs_coord = enc_outputs_unsig.sigmoid()
-                # enc_outputs_class = self.enc_class_embed(hs_enc[:-1])
                 out['enc_outputs'] = [
                     {'pred_logits': a, 'pred_boxes': b} for a, b in zip(enc_outputs_class, enc_outputs_coord)
                 ]
@@ -478,8 +467,6 @@ class SetCriterion(nn.Module):
             'cardinality': self.loss_cardinality,
             'boxes': self.loss_boxes,
             'masks': self.loss_masks,
-            # 'dn_labels': self.loss_dn_labels,
-            # 'dn_boxes': self.loss_dn_boxes
         }
         assert loss in loss_map, f'do you really want to compute {loss} loss?'
         return loss_map[loss](outputs, targets, indices, num_boxes, **kwargs)
@@ -533,7 +520,6 @@ class SetCriterion(nn.Module):
                 dn_pos_idx.append((output_idx, tgt_idx))
                 dn_neg_idx.append((output_idx + single_pad // 2, tgt_idx))
 
-
             output_known_lbs_bboxes=dn_meta['output_known_lbs_bboxes']
             l_dict = {}
             for loss in self.losses:
@@ -553,7 +539,6 @@ class SetCriterion(nn.Module):
             l_dict['loss_hw_dn'] = torch.as_tensor(0.).to('cuda')
             l_dict['cardinality_error_dn'] = torch.as_tensor(0.).to('cuda')
             losses.update(l_dict)
-
 
         for loss in self.losses:
             losses.update(self.get_loss(loss, outputs, targets, indices, num_boxes))
@@ -599,7 +584,6 @@ class SetCriterion(nn.Module):
                     l_dict['cardinality_error_dn'] = torch.as_tensor(0.).to('cuda')
                     l_dict = {k + f'_{idx}': v for k, v in l_dict.items()}
                     losses.update(l_dict)
-
 
         # interm_outputs loss
         if 'interm_outputs' in outputs:
@@ -696,12 +680,13 @@ class PostProcess(nn.Module):
 
         if self.nms_iou_threshold > 0:
             item_indices = [nms(b, s, iou_threshold=self.nms_iou_threshold) for b,s in zip(boxes, scores)]
-            # import ipdb; ipdb.set_trace()
+
             results = [{'scores': s[i], 'labels': l[i], 'boxes': b[i]} for s, l, b, i in zip(scores, labels, boxes, item_indices)]
         else:
             results = [{'scores': s, 'labels': l, 'boxes': b} for s, l, b in zip(scores, labels, boxes)]
 
         return results
+
 
 @MODULE_BUILD_FUNCS.registe_with_name(module_name='dino')
 def build_dino(args):
@@ -744,7 +729,6 @@ def build_dino(args):
         dec_pred_bbox_embed_share = args.dec_pred_bbox_embed_share
     except:
         dec_pred_bbox_embed_share = True
-
 
     model = DINO(
         backbone,

@@ -51,7 +51,7 @@ def train_one_epoch(model: torch.nn.Module, criterion: torch.nn.Module,
         
             loss_dict = criterion(outputs, targets)
             weight_dict = criterion.weight_dict
-            # import ipdb; ipdb.set_trace()
+
             losses = sum(loss_dict[k] * weight_dict[k] for k in loss_dict.keys() if k in weight_dict)
 
         # reduce losses over all GPUs for logging purposes
@@ -157,7 +157,7 @@ def evaluate(model, criterion, postprocessors, data_loader, base_ds, device, out
     output_state_dict = {} # for debug only
     for samples, targets in metric_logger.log_every(data_loader, 10, header, logger=logger):
         samples = samples.to(device)
-        # import ipdb; ipdb.set_trace()
+
         # targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
         targets = [{k: to_device(v, device) for k, v in t.items()} for t in targets]
 
@@ -190,7 +190,7 @@ def evaluate(model, criterion, postprocessors, data_loader, base_ds, device, out
             target_sizes = torch.stack([t["size"] for t in targets], dim=0)
             results = postprocessors['segm'](results, outputs, orig_target_sizes, target_sizes)
         res = {target['image_id'].item(): output for target, output in zip(targets, results)}
-        # import ipdb; ipdb.set_trace()
+
         if coco_evaluator is not None:
             coco_evaluator.update(res)
 
@@ -209,7 +209,7 @@ def evaluate(model, criterion, postprocessors, data_loader, base_ds, device, out
             # res_label = outputs['res_label']
             # res_bbox = outputs['res_bbox']
             # res_idx = outputs['res_idx']
-            # import ipdb; ipdb.set_trace()
+
 
             for i, (tgt, res, outbbox) in enumerate(zip(targets, results, outputs['pred_boxes'])):
                 """
@@ -292,7 +292,7 @@ def evaluate(model, criterion, postprocessors, data_loader, base_ds, device, out
         stats['PQ_th'] = panoptic_res["Things"]
         stats['PQ_st'] = panoptic_res["Stuff"]
 
-    # import ipdb; ipdb.set_trace()
+
 
     return stats, coco_evaluator
 
@@ -322,7 +322,7 @@ def test(model, criterion, postprocessors, data_loader, base_ds, device, output_
     final_res = []
     for samples, targets in metric_logger.log_every(data_loader, 10, header, logger=logger):
         samples = samples.to(device)
-        # import ipdb; ipdb.set_trace()
+
         # targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
         targets = [{k: to_device(v, device) for k, v in t.items()} for t in targets]
 
@@ -367,34 +367,5 @@ def test(model, criterion, postprocessors, data_loader, base_ds, device, output_
         import json
         with open(args.output_dir + f'/results{args.rank}.json', 'w') as f:
             json.dump(final_res, f)        
-        
-    # gather the stats from all processes
-    # metric_logger.synchronize_between_processes()
-    # print("Averaged stats:", metric_logger)
-    # if coco_evaluator is not None:
-    #     coco_evaluator.synchronize_between_processes()
-    # if panoptic_evaluator is not None:
-    #     panoptic_evaluator.synchronize_between_processes()
-
-    # # accumulate predictions from all images
-    # if coco_evaluator is not None:
-    #     coco_evaluator.accumulate()
-    #     coco_evaluator.summarize()
-        
-    # panoptic_res = None
-    # if panoptic_evaluator is not None:
-    #     panoptic_res = panoptic_evaluator.summarize()
-    # stats = {k: meter.global_avg for k, meter in metric_logger.meters.items() if meter.count > 0}
-    # if coco_evaluator is not None:
-    #     if 'bbox' in postprocessors.keys():
-    #         stats['coco_eval_bbox'] = coco_evaluator.coco_eval['bbox'].stats.tolist()
-    #     if 'segm' in postprocessors.keys():
-    #         stats['coco_eval_masks'] = coco_evaluator.coco_eval['segm'].stats.tolist()
-    # if panoptic_res is not None:
-    #     stats['PQ_all'] = panoptic_res["All"]
-    #     stats['PQ_th'] = panoptic_res["Things"]
-    #     stats['PQ_st'] = panoptic_res["Stuff"]
-
-    # import ipdb; ipdb.set_trace()
 
     return final_res

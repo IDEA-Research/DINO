@@ -614,7 +614,7 @@ class SwinTransformer(nn.Module):
         for i in range(self.num_layers):
             layer = self.layers[i]
             x_out, H, W, x, Wh, Ww = layer(x, Wh, Ww)
-            # import ipdb; ipdb.set_trace()
+
 
             if i in self.out_indices:
                 norm_layer = getattr(self, f'norm{i}')
@@ -724,6 +724,5 @@ if __name__ == "__main__":
     model = build_swin_transformer('swin_L_384_22k', 384, dilation=True)
     x = torch.rand(2, 3, 1024, 1024)
     y = model.forward_raw(x)
-    import ipdb; ipdb.set_trace()
     x = torch.rand(2, 3, 384, 384)
     y = model.forward_raw(x)

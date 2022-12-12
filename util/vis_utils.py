@@ -47,7 +47,7 @@ def plot_dual_img(img, boxes, labels, idxs, probs=None):
         img_classcolor: np.array. H,W,3. img with class-wise label.
         img_seqcolor: np.array. H,W,3. img with seq-wise label.
     """
-    # import ipdb; ipdb.set_trace()
+
     boxes = [i.cpu().tolist() for i in boxes]
     img = (renorm(img.cpu()).permute(1,2,0).numpy() * 255).astype(np.uint8)
     # plot with class
@@ -79,7 +79,7 @@ def plot_raw_img(img, boxes, labels):
     H, W = img.shape[:2]
     for box, label in zip(boxes.tolist(), labels.tolist()):
         x, y, w, h = box[0] * W, box[1] * H, box[2] * W, box[3] * H
-        # import ipdb; ipdb.set_trace()
+
         img = cv2.rectangle(img.copy(), (int(x-w/2), int(y-h/2)), (int(x+w/2), int(y+h/2)), _color_getter(label), 2)
         # add text
         org = (int(x-w/2), int(y+h/2))

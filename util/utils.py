@@ -377,8 +377,6 @@ class ModelEma(torch.nn.Module):
         self.module = deepcopy(model)
         self.module.eval()
 
-        # import ipdb; ipdb.set_trace()
-
         self.decay = decay
         self.device = device  # perform ema on different device from model if set
         if self.device is not None:

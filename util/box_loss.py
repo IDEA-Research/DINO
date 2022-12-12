@@ -110,4 +110,3 @@ if __name__ == "__main__":
     cxy = ciou(x, y)
     dxy = diou(x, y)
     print(cxy.shape, dxy.shape)
-    import ipdb; ipdb.set_trace()

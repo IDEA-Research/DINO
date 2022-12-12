@@ -5,15 +5,11 @@
 # ------------------------------------------------------------------------
 
 import torch
-import random
 from torch import nn, Tensor
-import os
 
 import math
 import torch.nn.functional as F
 from torch import nn
-
-
 
 
 def gen_encoder_output_proposals(memory:Tensor, memory_padding_mask:Tensor, spatial_shapes:Tensor, learnedwh=None):
@@ -36,8 +32,6 @@ def gen_encoder_output_proposals(memory:Tensor, memory_padding_mask:Tensor, spat
         valid_H = torch.sum(~mask_flatten_[:, :, 0, 0], 1)
         valid_W = torch.sum(~mask_flatten_[:, 0, :, 0], 1)
 
-        # import ipdb; ipdb.set_trace()
-
         grid_y, grid_x = torch.meshgrid(torch.linspace(0, H_ - 1, H_, dtype=torch.float32, device=memory.device),
                                         torch.linspace(0, W_ - 1, W_, dtype=torch.float32, device=memory.device))
         grid = torch.cat([grid_x.unsqueeze(-1), grid_y.unsqueeze(-1)], -1) # H_, W_, 2
@@ -46,18 +40,14 @@ def gen_encoder_output_proposals(memory:Tensor, memory_padding_mask:Tensor, spat
         grid = (grid.unsqueeze(0).expand(N_, -1, -1, -1) + 0.5) / scale
 
         if learnedwh is not None:
-            # import ipdb; ipdb.set_trace()
             wh = torch.ones_like(grid) * learnedwh.sigmoid() * (2.0 ** lvl)
         else:
             wh = torch.ones_like(grid) * 0.05 * (2.0 ** lvl)
 
-        # scale = torch.cat([W_[None].unsqueeze(-1), H_[None].unsqueeze(-1)], 1).view(1, 1, 1, 2).repeat(N_, 1, 1, 1)
-        # grid = (grid.unsqueeze(0).expand(N_, -1, -1, -1) + 0.5) / scale
-        # wh = torch.ones_like(grid) / scale
         proposal = torch.cat((grid, wh), -1).view(N_, -1, 4)
         proposals.append(proposal)
         _cur += (H_ * W_)
-    # import ipdb; ipdb.set_trace()
+
     output_proposals = torch.cat(proposals, 1)
     output_proposals_valid = ((output_proposals > 0.01) & (output_proposals < 0.99)).all(-1, keepdim=True)
     output_proposals = torch.log(output_proposals / (1 - output_proposals)) # unsigmoid
@@ -67,9 +57,6 @@ def gen_encoder_output_proposals(memory:Tensor, memory_padding_mask:Tensor, spat
     output_memory = memory
     output_memory = output_memory.masked_fill(memory_padding_mask.unsqueeze(-1), float(0))
     output_memory = output_memory.masked_fill(~output_proposals_valid, float(0))
-
-    # output_memory = output_memory.masked_fill(memory_padding_mask.unsqueeze(-1), float('inf'))
-    # output_memory = output_memory.masked_fill(~output_proposals_valid, float('inf'))
 
     return output_memory, output_proposals
 
@@ -87,7 +74,8 @@ class RandomBoxPerturber():
 
         new_refanchors = refanchors * (1 + (noise_raw - 0.5) * noise_scale)
         return new_refanchors.clamp_(0, 1)
-        
+
+
 def sigmoid_focal_loss(inputs, targets, num_boxes, alpha: float = 0.25, gamma: float = 2):
     """
     Loss used in RetinaNet for dense detection: https://arxiv.org/abs/1708.02002.
@@ -113,8 +101,8 @@ def sigmoid_focal_loss(inputs, targets, num_boxes, alpha: float = 0.25, gamma: f
         alpha_t = alpha * targets + (1 - alpha) * (1 - targets)
         loss = alpha_t * loss
 
-
     return loss.mean(1).sum() / num_boxes
+
 
 class MLP(nn.Module):
     """ Very simple multi-layer perceptron (also called FFN)"""
@@ -130,6 +118,7 @@ class MLP(nn.Module):
             x = F.relu(layer(x)) if i < self.num_layers - 1 else layer(x)
         return x
 
+
 def _get_activation_fn(activation, d_model=256, batch_dim=0):
     """Return an activation function given a string"""
     if activation == "relu":
@@ -144,8 +133,6 @@ def _get_activation_fn(activation, d_model=256, batch_dim=0):
         return F.selu
 
     raise RuntimeError(F"activation should be relu/gelu, not {activation}.")
-
-
 
 
 def gen_sineembed_for_position(pos_tensor):

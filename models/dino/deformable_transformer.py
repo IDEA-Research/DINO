@@ -15,11 +15,10 @@ import math, random
 import copy
 from typing import Optional
 
-from util.misc import inverse_sigmoid
-
 import torch
 from torch import nn, Tensor
 
+from util.misc import inverse_sigmoid
 from .utils import gen_encoder_output_proposals, MLP,_get_activation_fn, gen_sineembed_for_position
 from .ops.modules import MSDeformAttn
 
@@ -149,7 +148,7 @@ class DeformableTransformer(nn.Module):
         self.d_model = d_model
         self.nhead = nhead
         self.dec_layers = num_decoder_layers
-        self.num_queries = num_queries # useful for single stage model only
+        self.num_queries = num_queries  # useful for single stage model only
         self.num_patterns = num_patterns
         if not isinstance(num_patterns, int):
             Warning("num_patterns should be int but {}".format(type(num_patterns)))
@@ -189,14 +188,13 @@ class DeformableTransformer(nn.Module):
                 self.tgt_embed = nn.Embedding(self.two_stage_add_query_num, d_model)
 
             if two_stage_learn_wh:
-                # import ipdb; ipdb.set_trace()
+
                 self.two_stage_wh_embedding = nn.Embedding(1, 2)
             else:
                 self.two_stage_wh_embedding = None
 
         if two_stage_type == 'no':
             self.init_ref_points(num_queries) # init self.refpoint_embed
-
 
         self.enc_out_class_embed = None
         self.enc_out_bbox_embed = None
@@ -213,7 +211,6 @@ class DeformableTransformer(nn.Module):
 
         self.rm_self_attn_layers = rm_self_attn_layers
         if rm_self_attn_layers is not None:
-            # assert len(rm_self_attn_layers) == num_decoder_layers
             print("Removing the self-attn in {} decoder layers".format(rm_self_attn_layers))
             for lid, dec_layer in enumerate(self.decoder.layers):
                 if lid in rm_self_attn_layers:
@@ -238,7 +235,6 @@ class DeformableTransformer(nn.Module):
         if self.two_stage_learn_wh:
             nn.init.constant_(self.two_stage_wh_embedding.weight, math.log(0.05 / (1 - 0.05)))
 
-
     def get_valid_ratio(self, mask):
         _, H, W = mask.shape
         valid_H = torch.sum(~mask[:, :, 0], 1)
@@ -252,12 +248,10 @@ class DeformableTransformer(nn.Module):
         self.refpoint_embed = nn.Embedding(use_num_queries, 4)
         
         if self.random_refpoints_xy:
-            # import ipdb; ipdb.set_trace()
+
             self.refpoint_embed.weight.data[:, :2].uniform_(0,1)
             self.refpoint_embed.weight.data[:, :2] = inverse_sigmoid(self.refpoint_embed.weight.data[:, :2])
             self.refpoint_embed.weight.data[:, :2].requires_grad = False
-
-    
 
     def forward(self, srcs, masks, refpoint_embed, pos_embeds, tgt, attn_mask=None):
         """
@@ -269,9 +263,6 @@ class DeformableTransformer(nn.Module):
             - tgt: [bs, num_dn, d_model]. None in infer
             
         """
-        # if self.two_stage_type != 'no' and self.two_stage_add_query_num == 0:
-        #     assert refpoint_embed is None
-
         # prepare input for encoder
         src_flatten = []
         mask_flatten = []
@@ -324,7 +315,6 @@ class DeformableTransformer(nn.Module):
         # - enc_intermediate_refpoints: None or (nenc+1, bs, nq, c) or (nenc, bs, nq, c)
         #########################################################
 
-
         if self.two_stage_type =='standard':
             if self.two_stage_learn_wh:
                 input_hw = self.two_stage_wh_embedding.weight[0]
@@ -350,7 +340,6 @@ class DeformableTransformer(nn.Module):
             enc_outputs_coord_unselected = self.enc_out_bbox_embed(output_memory) + output_proposals # (bs, \sum{hw}, 4) unsigmoid
             topk = self.num_queries
             topk_proposals = torch.topk(enc_outputs_class_unselected.max(-1)[0], topk, dim=1)[1] # bs, nq
-            
 
             # gather boxes
             refpoint_embed_undetach = torch.gather(enc_outputs_coord_unselected, 1, topk_proposals.unsqueeze(-1).repeat(1, 1, 4)) # unsigmoid
@@ -396,7 +385,6 @@ class DeformableTransformer(nn.Module):
         # - refpoint_embed(unsigmoid): bs, NQ, d_model 
         ######################################################### 
 
-
         #########################################################
         # Begin Decoder
         #########################################################
@@ -415,7 +403,6 @@ class DeformableTransformer(nn.Module):
         # references: n_dec+1, bs, nq, query_dim
         #########################################################
 
-
         #########################################################
         # Begin postprocess
         #########################################################     
@@ -424,7 +411,7 @@ class DeformableTransformer(nn.Module):
                 hs_enc = output_memory.unsqueeze(0)
                 ref_enc = enc_outputs_coord_unselected.unsqueeze(0)
                 init_box_proposal = output_proposals
-                # import ipdb; ipdb.set_trace()
+
             else:
                 hs_enc = tgt_undetach.unsqueeze(0)
                 ref_enc = refpoint_embed_undetach.sigmoid().unsqueeze(0)
@@ -443,6 +430,7 @@ class DeformableTransformer(nn.Module):
         # ref_enc: sigmoid coordinates. \
         #           (n_enc+1, bs, nq, query_dim) or (1, bs, nq, query_dim) or None
 
+
 class TransformerEncoder(nn.Module):
 
     def __init__(self, 
@@ -450,7 +438,7 @@ class TransformerEncoder(nn.Module):
         num_queries=300,
         deformable_encoder=False, 
         enc_layer_share=False, enc_layer_dropout_prob=None,                  
-        two_stage_type='no', # ['no', 'standard', 'early', 'combine', 'enceachlayer', 'enclayer1']
+        two_stage_type='no',  # ['no', 'standard', 'early', 'combine', 'enceachlayer', 'enclayer1']
     ):
         super().__init__()
         # prepare layers
@@ -530,12 +518,10 @@ class TransformerEncoder(nn.Module):
             assert ref_token_index is None
 
         output = src
-
         # preparation and reshape
         if self.num_layers > 0:
             if self.deformable_encoder:
                 reference_points = self.get_reference_points(spatial_shapes, valid_ratios, device=src.device)
-                # import ipdb; ipdb.set_trace()
 
         intermediate_output = []
         intermediate_ref = []
@@ -544,8 +530,6 @@ class TransformerEncoder(nn.Module):
             intermediate_output.append(out_i)
             intermediate_ref.append(ref_token_coord)
 
-
-        # intermediate_coord = []
         # main process
         for layer_id, layer in enumerate(self.layers):
             # main process
@@ -580,7 +564,6 @@ class TransformerEncoder(nn.Module):
                 out_i = torch.gather(output, 1, ref_token_index.unsqueeze(-1).repeat(1, 1, self.d_model))
                 intermediate_output.append(out_i)
                 intermediate_ref.append(ref_token_coord)
-
 
         if self.norm is not None:
             output = self.norm(output)
@@ -653,7 +636,6 @@ class TransformerDecoder(nn.Module):
         if dec_layer_number is not None:
             assert isinstance(dec_layer_number, list)
             assert len(dec_layer_number) == num_layers
-            # assert dec_layer_number[0] == 
             
         self.dec_layer_dropout_prob = dec_layer_dropout_prob
         if dec_layer_dropout_prob is not None:
@@ -696,8 +678,6 @@ class TransformerDecoder(nn.Module):
             if self.training and self.decoder_query_perturber is not None and layer_id != 0:
                 reference_points = self.decoder_query_perturber(reference_points)
 
-
-
             if self.deformable_decoder:
                 if reference_points.shape[-1] == 4:
                     reference_points_input = reference_points[:, :, None] \
@@ -711,7 +691,6 @@ class TransformerDecoder(nn.Module):
                 reference_points_input = None
 
             # conditional query
-            # import ipdb; ipdb.set_trace()
             raw_query_pos = self.ref_point_head(query_sine_embed) # nq, bs, 256
             pos_scale = self.query_scale(output) if self.query_scale is not None else 1
             query_pos = pos_scale * raw_query_pos
@@ -724,8 +703,7 @@ class TransformerDecoder(nn.Module):
                 query_sine_embed[..., self.d_model // 2:] *= (refHW_cond[..., 0] / reference_points[..., 2]).unsqueeze(-1)
                 query_sine_embed[..., :self.d_model // 2] *= (refHW_cond[..., 1] / reference_points[..., 3]).unsqueeze(-1)
 
-            # main process
-            # import ipdb; ipdb.set_trace()
+            # random drop some layers if needed
             dropflag = False
             if self.dec_layer_dropout_prob is not None:
                 prob = random.random()
@@ -751,10 +729,6 @@ class TransformerDecoder(nn.Module):
 
             # iter update
             if self.bbox_embed is not None:
-                # box_holder = self.bbox_embed(output)
-                # box_holder[..., :self.query_dim] += inverse_sigmoid(reference_points)
-                # new_reference_points = box_holder[..., :self.query_dim].sigmoid()
-
                 reference_before_sigmoid = inverse_sigmoid(reference_points)
                 delta_unsig = self.bbox_embed[layer_id](output)
                 outputs_unsig = delta_unsig + reference_before_sigmoid
@@ -762,7 +736,6 @@ class TransformerDecoder(nn.Module):
 
                 # select # ref points
                 if self.dec_layer_number is not None and layer_id != self.num_layers - 1:
-                    # import ipdb; ipdb.set_trace()
                     nq_now = new_reference_points.shape[0]
                     select_number = self.dec_layer_number[layer_id + 1]
                     if nq_now != select_number:
@@ -779,12 +752,10 @@ class TransformerDecoder(nn.Module):
                 else:
                     ref_points.append(new_reference_points)
 
-
             intermediate.append(self.norm(output))
             if self.dec_layer_number is not None and layer_id != self.num_layers - 1:
                 if nq_now != select_number:
                     output = torch.gather(output, 0, topk_proposals.unsqueeze(-1).repeat(1, 1, self.d_model)) # unsigmoid
-
 
         return [
             [itm_out.transpose(0, 1) for itm_out in intermediate],
@@ -801,7 +772,6 @@ class DeformableTransformerEncoderLayer(nn.Module):
                  box_attn_type='roi_align',
                  ):
         super().__init__()
-
         # self attention
         if use_deformable_box_attn:
             self.self_attn = MSDeformableBoxAttention(d_model, n_levels, n_heads, n_boxes=n_points, used_func=box_attn_type)
@@ -862,9 +832,7 @@ class DeformableTransformerDecoderLayer(nn.Module):
         super().__init__()
         self.module_seq = module_seq
         assert sorted(module_seq) == ['ca', 'ffn', 'sa']
-
         # cross attention
-        # self.cross_attn = MSDeformAttn(d_model, n_levels, n_heads, n_points)
         if use_deformable_box_attn:
             self.cross_attn = MSDeformableBoxAttention(d_model, n_levels, n_heads, n_boxes=n_points, used_func=box_attn_type)
         else:
@@ -893,14 +861,10 @@ class DeformableTransformerDecoderLayer(nn.Module):
         if decoder_sa_type == 'ca_content':
             self.self_attn = MSDeformAttn(d_model, n_levels, n_heads, n_points)
 
-
-
-
     def rm_self_attn_modules(self):
         self.self_attn = None
         self.dropout2 = None
         self.norm2 = None
-
 
     @staticmethod
     def with_pos_embed(tensor, pos):
@@ -1083,7 +1047,7 @@ def build_deformable_transformer(args):
         random_refpoints_xy=args.random_refpoints_xy,
 
         # two stage
-        two_stage_type=args.two_stage_type, # ['no', 'standard', 'early']
+        two_stage_type=args.two_stage_type,  # ['no', 'standard', 'early']
         two_stage_pat_embed=args.two_stage_pat_embed,
         two_stage_add_query_num=args.two_stage_add_query_num,
         two_stage_learn_wh=args.two_stage_learn_wh,

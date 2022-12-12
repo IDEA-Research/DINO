@@ -1,34 +1,27 @@
-# Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved
+# Copyright (c) 2022 IDEA. All Rights Reserved.
+# ------------------------------------------------------------------------
 import argparse
 import datetime
 import json
-
-
-
 import random
 import time
 from pathlib import Path
 import os, sys
-from typing import Optional
-from util.get_param_dicts import get_param_dict
-
-
-
-
-from util.logger import setup_logger
-
 import numpy as np
+
 import torch
 from torch.utils.data import DataLoader, DistributedSampler
-import torch.distributed as dist
 
-import datasets
-import util.misc as utils
-from datasets import build_dataset, get_coco_api_from_dataset
-from engine import evaluate, train_one_epoch, test
-import models
+from util.get_param_dicts import get_param_dict
+from util.logger import setup_logger
 from util.slconfig import DictAction, SLConfig
 from util.utils import ModelEma, BestMetricHolder
+import util.misc as utils
+
+import datasets
+from datasets import build_dataset, get_coco_api_from_dataset
+from engine import evaluate, train_one_epoch, test
+
 
 
 def get_args_parser():
@@ -46,7 +39,6 @@ def get_args_parser():
     parser.add_argument('--coco_panoptic_path', type=str)
     parser.add_argument('--remove_difficult', action='store_true')
     parser.add_argument('--fix_size', action='store_true')
-
 
     # training parameters
     parser.add_argument('--output_dir', default='',
@@ -66,7 +58,6 @@ def get_args_parser():
     parser.add_argument('--test', action='store_true')
     parser.add_argument('--debug', action='store_true')
     parser.add_argument('--find_unused_params', action='store_true')
-    
 
     parser.add_argument('--save_results', action='store_true')
     parser.add_argument('--save_log', action='store_true')
@@ -387,7 +378,6 @@ def main(args):
         for filename in copyfilelist:
             print("Removing: {}".format(filename))
             remove(filename)
-
 
 
 if __name__ == '__main__':

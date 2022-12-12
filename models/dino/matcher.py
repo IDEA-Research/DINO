@@ -16,8 +16,8 @@
 
 
 import torch, os
-from scipy.optimize import linear_sum_assignment
 from torch import nn
+from scipy.optimize import linear_sum_assignment
 
 from util.box_ops import box_cxcywh_to_xyxy, generalized_box_iou
 

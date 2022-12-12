@@ -84,7 +84,7 @@ class PositionEmbeddingSineHW(nn.Module):
         y_embed = not_mask.cumsum(1, dtype=torch.float32)
         x_embed = not_mask.cumsum(2, dtype=torch.float32)
 
-        # import ipdb; ipdb.set_trace()
+
 
         if self.normalize:
             eps = 1e-6
@@ -103,7 +103,7 @@ class PositionEmbeddingSineHW(nn.Module):
         pos_y = torch.stack((pos_y[:, :, :, 0::2].sin(), pos_y[:, :, :, 1::2].cos()), dim=4).flatten(3)
         pos = torch.cat((pos_y, pos_x), dim=3).permute(0, 3, 1, 2)
 
-        # import ipdb; ipdb.set_trace()
+
 
         return pos
 

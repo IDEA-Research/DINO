@@ -8,6 +8,8 @@ This is the official implementation of the paper "[DINO: DETR with Improved DeNo
 Authors: [Hao Zhang](https://scholar.google.com/citations?user=B8hPxMQAAAAJ&hl=zh-CN)\*, [Feng Li](https://fengli-ust.github.io/)\*, [Shilong Liu](https://www.lsl.zone/)\*, [Lei Zhang](https://www.leizhang.org/), [Hang Su](https://www.suhangss.me/), [Jun Zhu](https://ml.cs.tsinghua.edu.cn/~jun/index.shtml), [Lionel M. Ni](https://www.cse.ust.hk/~ni/), [Heung-Yeung Shum](https://scholar.google.com.hk/citations?user=9akH-n8AAAAJ&hl=en)
 
 # News
+[2023/4/28]: We release a strong open-set object detection and segmentation model [OpenSeeD](https://arxiv.org/pdf/2303.08131.pdf) that achieves the best results on open-set object segmentation tasks. Code and checkpoints are available [here](https://github.com/IDEA-Research/OpenSeeD).
+</br>
 [2023/4/22]: With better hyper-params, our DINO-4scale model achieves `49.7AP` under 12ep settings, please check [detrex: DINO](https://github.com/IDEA-Research/detrex/tree/main/projects/dino) for more details.</br>
 [2023/3/13]: We release a strong open-set object detection model [Grounding DINO](https://arxiv.org/abs/2303.05499) that achieves the best results on open-set object detection tasks. It achieves **52.5** **zero-shot** AP on COCO detection, **without any COCO training data!** It achieves **63.0** AP on COCO after fine-tuning. Code and checkpoints will be available [here](https://github.com/IDEA-Research/GroundingDINO).
 </br>

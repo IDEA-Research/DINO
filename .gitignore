@@ -1,5 +1,4 @@
 .nfs*
-*.ipynb
 *.pyc
 .dumbo.json
 .DS_Store
@@ -23,5 +22,4 @@ tmp
 vis/
 model_zoo/
 model_zoo_old/
-scripts/
 .idea

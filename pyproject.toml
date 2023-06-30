@@ -18,6 +18,7 @@ yapf = "^0.40.1"
 timm = "^0.9.2"
 torch = ">=1.8.1"
 torchvision = ">=0.8"
+MultiScaleDeformableAttention = {git = "https://github.com/IDEA-Research/DINO.git", subdirectory = "models/dino/ops"}
 
 [build-system]
 requires = ["poetry-core"]

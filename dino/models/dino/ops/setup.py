@@ -12,6 +12,7 @@ import glob
 import torch
 
 from torch.utils.cpp_extension import CUDA_HOME
+from torch.utils.cpp_extension import CppExtension
 from torch.utils.cpp_extension import CUDAExtension
 
 from setuptools import find_packages
@@ -28,8 +29,11 @@ def get_extensions():
     source_cuda = glob.glob(os.path.join(extensions_dir, "cuda", "*.cu"))
 
     sources = main_file + source_cpu
+    extension = CppExtension
     extra_compile_args = {"cxx": []}
     define_macros = []
+
+
 
     if torch.cuda.is_available() and CUDA_HOME is not None:
         extension = CUDAExtension
@@ -41,33 +45,29 @@ def get_extensions():
             "-D__CUDA_NO_HALF_CONVERSIONS__",
             "-D__CUDA_NO_HALF2_OPERATORS__",
         ]
-
-        sources = [os.path.join(extensions_dir, s) for s in sources]
-        include_dirs = [extensions_dir]
-        ext_modules = [
-            extension(
-                "MultiScaleDeformableAttention",
-                sources,
-                include_dirs=include_dirs,
-                define_macros=define_macros,
-                extra_compile_args=extra_compile_args,
-            )
-        ]
-        return ext_modules
     else:
-        print('Cuda is not available.')
-        print('Please install Cuda and try again.')
-        return None
+        raise NotImplementedError('Cuda is not availabel')
 
-ext_modules = get_extensions()
-if ext_modules is not None:
-    setup(
-        name="MultiScaleDeformableAttention",
-        version="1.0",
-        author="Weijie Su",
-        url="https://github.com/fundamentalvision/Deformable-DETR",
-        description="PyTorch Wrapper for CUDA Functions of Multi-Scale Deformable Attention",
-        packages=find_packages(exclude=("configs", "tests",)),
-        ext_modules=ext_modules,
-        cmdclass={"build_ext": torch.utils.cpp_extension.BuildExtension},
-    )
+    sources = [os.path.join(extensions_dir, s) for s in sources]
+    include_dirs = [extensions_dir]
+    ext_modules = [
+        extension(
+            "MultiScaleDeformableAttention",
+            sources,
+            include_dirs=include_dirs,
+            define_macros=define_macros,
+            extra_compile_args=extra_compile_args,
+        )
+    ]
+    return ext_modules
+
+setup(
+    name="MultiScaleDeformableAttention",
+    version="1.0",
+    author="Weijie Su",
+    url="https://github.com/fundamentalvision/Deformable-DETR",
+    description="PyTorch Wrapper for CUDA Functions of Multi-Scale Deformable Attention",
+    packages=find_packages(exclude=("configs", "tests",)),
+    ext_modules=get_extensions(),
+    cmdclass={"build_ext": torch.utils.cpp_extension.BuildExtension},
+)

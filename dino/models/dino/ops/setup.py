@@ -46,8 +46,7 @@ def get_extensions():
             "-D__CUDA_NO_HALF2_OPERATORS__",
         ]
     else:
-        print('(WARNING) Cuda is not available')
-        print('(WARNING) Please re-install this package after installing CUDA')
+        raise NotImplementedError('Cuda is not availabel')
 
     sources = [os.path.join(extensions_dir, s) for s in sources]
     include_dirs = [extensions_dir]

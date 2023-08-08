@@ -25,7 +25,7 @@ from torchvision.models._utils import IntermediateLayerGetter
 from typing import Dict, List
 
 
-from util.misc import NestedTensor, clean_state_dict, is_main_process
+from dino.util.misc import NestedTensor, clean_state_dict, is_main_process
 
 from .position_encoding import build_position_encoding
 from .convnext import build_convnext

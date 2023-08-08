@@ -9,11 +9,11 @@
 
 
 import torch
-from util.misc import (NestedTensor, nested_tensor_from_tensor_list,
+from dino.util.misc import (NestedTensor, nested_tensor_from_tensor_list,
                        accuracy, get_world_size, interpolate,
                        is_dist_avail_and_initialized, inverse_sigmoid)
 # from .DABDETR import sigmoid_focal_loss
-from util import box_ops
+from dino.util import box_ops
 import torch.nn.functional as F
 
 

@@ -12,7 +12,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from timm.models.layers import trunc_normal_, DropPath
 
-from util.misc import NestedTensor
+from dino.util.misc import NestedTensor
 # from timm.models.registry import register_model
 
 class Block(nn.Module):

@@ -32,15 +32,15 @@ import torch.nn as nn
 from functools import partial
 import time
 
-from util.slconfig import SLConfig
+from dino.util.slconfig import SLConfig
 
 from typing import Any, Callable, List, Optional, Union
 from numbers import Number
 
 Handle = Callable[[List[Any], List[Any]], Union[typing.Counter[str], Number]]
 
-from main import build_model_main, get_args_parser as get_main_args_parser
-from datasets import build_dataset
+from dino.main import build_model_main, get_args_parser as get_main_args_parser
+from dino.datasets import build_dataset
 
 
 def get_shape(val: object) -> typing.List[int]:

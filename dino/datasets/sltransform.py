@@ -9,7 +9,7 @@ import numpy as np
 import random
 
 from .random_crop import random_crop
-from util.box_ops import box_cxcywh_to_xyxy, box_xyxy_to_cxcywh
+from dino.util.box_ops import box_cxcywh_to_xyxy, box_xyxy_to_cxcywh
 
 class AdjustContrast:
     def __init__(self, contrast_factor):

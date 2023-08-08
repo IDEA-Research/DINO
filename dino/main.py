@@ -12,15 +12,15 @@ import numpy as np
 import torch
 from torch.utils.data import DataLoader, DistributedSampler
 
-from util.get_param_dicts import get_param_dict
-from util.logger import setup_logger
-from util.slconfig import DictAction, SLConfig
-from util.utils import ModelEma, BestMetricHolder
-import util.misc as utils
+from dino.util.get_param_dicts import get_param_dict
+from dino.util.logger import setup_logger
+from dino.util.slconfig import DictAction, SLConfig
+from dino.util.utils import ModelEma, BestMetricHolder
+import dino.util.misc as utils
 
-import datasets
-from datasets import build_dataset, get_coco_api_from_dataset
-from engine import evaluate, train_one_epoch, test
+from dino import datasets
+from dino.datasets import build_dataset, get_coco_api_from_dataset
+from dino.engine import evaluate, train_one_epoch
 
 
 
@@ -374,7 +374,7 @@ def main(args):
     # remove the copied files.
     copyfilelist = vars(args).get('copyfilelist')
     if copyfilelist and args.local_rank == 0:
-        from datasets.data_util import remove
+        from dino.datasets.data_util import remove
         for filename in copyfilelist:
             print("Removing: {}".format(filename))
             remove(filename)

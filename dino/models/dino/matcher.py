@@ -19,7 +19,7 @@ import torch, os
 from torch import nn
 from scipy.optimize import linear_sum_assignment
 
-from util.box_ops import box_cxcywh_to_xyxy, generalized_box_iou
+from dino.util.box_ops import box_cxcywh_to_xyxy, generalized_box_iou
 
 
 class HungarianMatcher(nn.Module):

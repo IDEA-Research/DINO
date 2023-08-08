@@ -7,7 +7,7 @@ import os, sys
 import uuid
 from pathlib import Path
 
-import main as detection
+import dino.main as detection
 import submitit
 
 

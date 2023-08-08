@@ -202,7 +202,7 @@ def inverse_sigmoid(x, eps=1e-5):
     return torch.log(x1/x2)
 
 import argparse
-from util.slconfig import SLConfig
+from dino.util.slconfig import SLConfig
 def get_raw_dict(args):
     """
     return the dicf contained in args.

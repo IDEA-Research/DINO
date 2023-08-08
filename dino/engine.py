@@ -8,13 +8,13 @@ import os
 import sys
 from typing import Iterable
 
-from util.utils import slprint, to_device
+from dino.util.utils import slprint, to_device
 
 import torch
 
-import util.misc as utils
-from datasets.coco_eval import CocoEvaluator
-from datasets.panoptic_eval import PanopticEvaluator
+import dino.util.misc as utils
+from dino.datasets.coco_eval import CocoEvaluator
+from dino.datasets.panoptic_eval import PanopticEvaluator
 
 
 def train_one_epoch(model: torch.nn.Module, criterion: torch.nn.Module,

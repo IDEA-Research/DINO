@@ -806,9 +806,9 @@ class DeformableTransformerEncoderLayer(nn.Module):
 
         # channel attention
         self.add_channel_attention = add_channel_attention
-        if add_channel_attention:
-            self.activ_channel = _get_activation_fn('dyrelu', d_model=d_model)
-            self.norm_channel = nn.LayerNorm(d_model)
+        # if add_channel_attention:
+        #     self.activ_channel = _get_activation_fn('dyrelu', d_model=d_model)
+        #     self.norm_channel = nn.LayerNorm(d_model)
 
     @staticmethod
     def with_pos_embed(tensor, pos):
@@ -831,8 +831,8 @@ class DeformableTransformerEncoderLayer(nn.Module):
         src = self.forward_ffn(src)
 
         # channel attn
-        if self.add_channel_attention:
-            src = self.norm_channel(src + self.activ_channel(src))
+        # if self.add_channel_attention:
+        #     src = self.norm_channel(src + self.activ_channel(src))
 
         return src
 

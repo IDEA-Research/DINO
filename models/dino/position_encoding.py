@@ -64,12 +64,13 @@ class PositionEmbeddingSineHW(nn.Module):
     This is a more standard version of the position embedding, very similar to the one
     used by the Attention is all you need paper, generalized to work on images.
     """
-    def __init__(self, num_pos_feats=64, temperatureH=10000, temperatureW=10000, normalize=False, scale=None):
+    def __init__(self, num_pos_feats=64, temperatureH=10000, temperatureW=10000, normalize=False, scale=None, offset=0.0):
         super().__init__()
         self.num_pos_feats = num_pos_feats
         self.temperatureH = temperatureH
         self.temperatureW = temperatureW
         self.normalize = normalize
+        self.offset = offset  # detrex PositionEmbeddingSine uses offset=-0.5; stock DINO used 0.0
         if scale is not None and normalize is False:
             raise ValueError("normalize should be True if scale is passed")
         if scale is None:
@@ -88,8 +89,8 @@ class PositionEmbeddingSineHW(nn.Module):
 
         if self.normalize:
             eps = 1e-6
-            y_embed = y_embed / (y_embed[:, -1:, :] + eps) * self.scale
-            x_embed = x_embed / (x_embed[:, :, -1:] + eps) * self.scale
+            y_embed = (y_embed + self.offset) / (y_embed[:, -1:, :] + eps) * self.scale
+            x_embed = (x_embed + self.offset) / (x_embed[:, :, -1:] + eps) * self.scale
 
         dim_tx = torch.arange(self.num_pos_feats, dtype=torch.float32, device=x.device)
         dim_tx = self.temperatureW ** (2 * (dim_tx // 2) / self.num_pos_feats)
@@ -140,10 +141,11 @@ def build_position_encoding(args):
     if args.position_embedding in ('v2', 'sine'):
         # TODO find a better way of exposing other arguments
         position_embedding = PositionEmbeddingSineHW(
-            N_steps, 
+            N_steps,
             temperatureH=args.pe_temperatureH,
             temperatureW=args.pe_temperatureW,
-            normalize=True
+            normalize=True,
+            offset=getattr(args, "pe_offset", 0.0),
         )
     elif args.position_embedding in ('v3', 'learned'):
         position_embedding = PositionEmbeddingLearned(N_steps)

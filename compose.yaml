@@ -1,0 +1,14 @@
+services:
+  dino:
+    build:
+      context: .
+    command: bash
+    container_name: dino
+    gpus: all
+    image: dino
+    shm_size: "8gb"
+    stdin_open: true
+    tty: true
+    volumes:
+      - .:/app/DINO
+    working_dir: /app/DINO
